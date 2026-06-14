@@ -5,15 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { usePathname } from 'next/navigation';
-import { useAppSelector } from '../lib/redux/hooks';
 import { NAV_LINKS } from '../lib/constants';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
-  const user = useAppSelector((state) => state.auth.user);
   const pathname = usePathname();
   
   useEffect(() => {
