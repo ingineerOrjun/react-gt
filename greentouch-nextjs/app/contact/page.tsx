@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 const ContactPageClient = dynamic(() => import('./ContactPageClient'), { ssr: false });
 
 export const metadata: Metadata = {
-  title: 'Contact Us | GreenTouch Chemical Industries Private Limited',
+  title: 'Contact Us | GreenTouch Chemicals Pvt. Ltd.',
   description: 'Get in touch with our team for inquiries about our eco-friendly chemical solutions, partnerships, or sustainability initiatives.',
 };
 

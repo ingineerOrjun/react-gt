@@ -7,8 +7,8 @@ import TestimonialsSection from './components/TestimonialsSection';
 import CtaSection from './components/CtaSection';
 
 export const metadata: Metadata = {
-  title: 'GreenTouch Chemical Industries Private Limited - Sustainable Chemical Solutions',
-  description: 'GreenTouch Chemical Industries Private Limited provides eco-friendly and sustainable chemical solutions for businesses and consumers.',
+  title: 'GreenTouch Chemicals Pvt. Ltd. - Sustainable Chemical Solutions',
+  description: 'GreenTouch Chemicals Pvt. Ltd. provides eco-friendly and sustainable chemical solutions for businesses and consumers.',
 };
 
 export default function HomePage() {

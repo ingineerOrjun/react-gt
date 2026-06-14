@@ -83,9 +83,9 @@ export const API_ENDPOINTS = {
 
 // Site metadata for SEO
 export const SITE_METADATA = {
-  title: 'GreenTouch Chemical Industries Private Limited - Sustainable Chemical Solutions',
-  description: 'GreenTouch Chemical Industries Private Limited provides eco-friendly and sustainable chemical solutions for businesses and consumers. Our products are designed to minimize environmental impact while delivering exceptional performance.',
-  keywords: 'green chemicals, eco-friendly products, sustainable solutions, environmentally friendly, biodegradable, GreenTouch Chemical Industries Private Limited',
-  author: 'GreenTouch Chemical Industries Private Limited',
+  title: 'GreenTouch Chemicals Pvt. Ltd. - Sustainable Chemical Solutions',
+  description: 'GreenTouch Chemicals Pvt. Ltd. provides eco-friendly and sustainable chemical solutions for businesses and consumers. Our products are designed to minimize environmental impact while delivering exceptional performance.',
+  keywords: 'green chemicals, eco-friendly products, sustainable solutions, environmentally friendly, biodegradable, GreenTouch Chemicals Pvt. Ltd.',
+  author: 'GreenTouch Chemicals Pvt. Ltd.',
   siteUrl: 'https://greentouchchemicals.com',
 }; 

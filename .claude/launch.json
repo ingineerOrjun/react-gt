@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "greentouch-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "greentouch-nextjs"],
+      "autoPort": true,
+      "port": 3000
+    }
+  ]
+}
