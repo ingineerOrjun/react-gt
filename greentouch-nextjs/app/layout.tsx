@@ -62,7 +62,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${poppins.variable} scroll-smooth`}
     >
-      <body className="font-sans antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 selection:bg-green-200 selection:text-green-900">
+      <body className="font-sans antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 selection:bg-green-200 selection:text-green-900">
         <Providers>
           <Navbar />
           <main className="flex-grow pt-20">{children}</main>

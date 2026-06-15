@@ -16,7 +16,7 @@ const subjects = [
 ];
 
 const baseField =
-  'w-full px-4 py-2.5 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
+  'w-full px-4 py-2.5 border rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -100,7 +100,7 @@ const ContactForm = () => {
   };
 
   const fieldClass = (name: string) =>
-    `${baseField} ${errors[name] ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'}`;
+    `${baseField} ${errors[name] ? 'border-red-500' : 'border-gray-300 dark:border-slate-700'}`;
 
   if (submitSuccess) {
     return (
@@ -130,7 +130,7 @@ const ContactForm = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="name" className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+          <label htmlFor="name" className="block text-gray-700 dark:text-slate-200 font-medium mb-2">
             Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -145,7 +145,7 @@ const ContactForm = () => {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+          <label htmlFor="email" className="block text-gray-700 dark:text-slate-200 font-medium mb-2">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -160,7 +160,7 @@ const ContactForm = () => {
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+          <label htmlFor="phone" className="block text-gray-700 dark:text-slate-200 font-medium mb-2">
             Phone
           </label>
           <input
@@ -169,12 +169,12 @@ const ContactForm = () => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className={`${baseField} border-gray-300 dark:border-gray-700`}
+            className={`${baseField} border-gray-300 dark:border-slate-700`}
           />
         </div>
 
         <div>
-          <label htmlFor="company" className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+          <label htmlFor="company" className="block text-gray-700 dark:text-slate-200 font-medium mb-2">
             Company
           </label>
           <input
@@ -183,13 +183,13 @@ const ContactForm = () => {
             name="company"
             value={formData.company}
             onChange={handleChange}
-            className={`${baseField} border-gray-300 dark:border-gray-700`}
+            className={`${baseField} border-gray-300 dark:border-slate-700`}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="subject" className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+        <label htmlFor="subject" className="block text-gray-700 dark:text-slate-200 font-medium mb-2">
           Subject <span className="text-red-500">*</span>
         </label>
         <select
@@ -210,7 +210,7 @@ const ContactForm = () => {
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+        <label htmlFor="message" className="block text-gray-700 dark:text-slate-200 font-medium mb-2">
           Message <span className="text-red-500">*</span>
         </label>
         <textarea
@@ -243,7 +243,7 @@ const ContactForm = () => {
         </button>
       </div>
 
-      <p className="text-gray-500 dark:text-gray-400 text-sm">
+      <p className="text-gray-500 dark:text-slate-400 text-sm">
         Fields marked with <span className="text-red-500">*</span> are required.
       </p>
     </form>

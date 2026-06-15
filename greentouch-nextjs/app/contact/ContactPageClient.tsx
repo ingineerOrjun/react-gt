@@ -37,7 +37,7 @@ export default function ContactPageClient() {
   useEffect(() => setLoaded(true), []);
 
   return (
-    <main className="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 py-12 md:py-20 min-h-screen">
+    <main className="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-slate-950 dark:to-slate-900 py-12 md:py-20 min-h-screen">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -45,10 +45,10 @@ export default function ContactPageClient() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-slate-100 mb-4">
             Contact Us
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-slate-300 max-w-2xl mx-auto">
             Have questions or want to learn more about our eco-friendly solutions? Our team is ready
             to assist you. Fill out the form below or use our contact information.
           </p>
@@ -62,8 +62,8 @@ export default function ContactPageClient() {
         >
           {/* Form */}
           <motion.div variants={itemVariants} className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 md:p-8">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 md:p-8">
+              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-slate-100">
                 Send Us a Message
               </h2>
               <ContactForm />
@@ -72,8 +72,8 @@ export default function ContactPageClient() {
 
           {/* Info column */}
           <motion.div variants={itemVariants} className="space-y-8">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 hover:shadow-xl transition-all duration-300">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 md:p-8 hover:shadow-xl transition-all duration-300">
+              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-slate-100">
                 Contact Information
               </h2>
               <div className="space-y-4">
@@ -86,7 +86,7 @@ export default function ContactPageClient() {
                       <Icon className="h-6 w-6 text-green-600 dark:text-green-400" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white mb-1">{title}</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-slate-100 mb-1">{title}</h3>
                       {href ? (
                         <a
                           href={href}
@@ -95,7 +95,7 @@ export default function ContactPageClient() {
                           {value}
                         </a>
                       ) : (
-                        <p className="text-gray-600 dark:text-gray-300">{value}</p>
+                        <p className="text-gray-600 dark:text-slate-300">{value}</p>
                       )}
                     </div>
                   </div>
@@ -103,8 +103,8 @@ export default function ContactPageClient() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 hover:shadow-xl transition-all duration-300">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 md:p-8 hover:shadow-xl transition-all duration-300">
+              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-slate-100">
                 Connect With Us
               </h2>
               <div className="flex flex-wrap gap-4">
@@ -115,7 +115,7 @@ export default function ContactPageClient() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-green-600 hover:text-white p-4 rounded-full transition-all duration-300 hover:scale-110"
+                    className="bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-green-600 hover:text-white p-4 rounded-full transition-all duration-300 hover:scale-110"
                   >
                     <Icon className="h-6 w-6" />
                   </a>

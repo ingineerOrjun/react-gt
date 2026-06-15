@@ -36,8 +36,8 @@ export default function Navbar() {
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md'
-          : 'bg-white dark:bg-gray-900'
+          ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md'
+          : 'bg-white dark:bg-slate-900'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -48,10 +48,10 @@ export default function Navbar() {
               <Leaf className="h-6 w-6" strokeWidth={2.5} />
             </span>
             <span className="flex flex-col leading-tight">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">
+              <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                 Green<span className="text-green-600 dark:text-green-400">Touch</span>
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-gray-500 dark:text-gray-400">
+              <span className="text-[10px] uppercase tracking-widest text-gray-500 dark:text-slate-400">
                 Chemicals Pvt. Ltd.
               </span>
             </span>
@@ -63,25 +63,20 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.path}
-                className={`relative font-medium transition-colors duration-200 ${
+                aria-current={isActive(link.path) ? 'page' : undefined}
+                className={`link-underline font-medium transition-colors duration-200 ${
                   isActive(link.path)
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400'
+                    ? 'is-active text-green-600 dark:text-green-400'
+                    : 'text-slate-700 dark:text-slate-200 hover:text-green-600 dark:hover:text-green-400'
                 }`}
               >
                 {link.label}
-                {isActive(link.path) && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-green-600 dark:bg-green-400 rounded-full"
-                  />
-                )}
               </Link>
             ))}
 
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:ring-2 hover:ring-green-400 transition"
+              className="p-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 hover:ring-2 hover:ring-green-400 transition"
               aria-label="Toggle theme"
             >
               {mounted && theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -89,7 +84,7 @@ export default function Navbar() {
 
             <Link
               href="/contact"
-              className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition"
+              className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 ease-out"
             >
               Get a Quote
             </Link>
@@ -99,14 +94,14 @@ export default function Navbar() {
           <div className="md:hidden flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+              className="p-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200"
               aria-label="Toggle theme"
             >
               {mounted && theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
             <button
               onClick={() => setIsMenuOpen((v) => !v)}
-              className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400"
+              className="text-gray-700 dark:text-slate-200 hover:text-green-600 dark:hover:text-green-400"
               aria-label="Toggle menu"
               aria-expanded={isMenuOpen}
             >
@@ -124,7 +119,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white dark:bg-gray-900 shadow-lg overflow-hidden border-t border-gray-100 dark:border-gray-800"
+            className="md:hidden bg-white dark:bg-slate-900 shadow-lg overflow-hidden border-t border-gray-100 dark:border-slate-800"
           >
             <nav className="flex flex-col space-y-1 px-4 py-3">
               {NAV_LINKS.map((link) => (
@@ -135,7 +130,7 @@ export default function Navbar() {
                   className={`font-medium py-2.5 px-3 rounded-lg transition-colors ${
                     isActive(link.path)
                       ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      : 'text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {link.label}

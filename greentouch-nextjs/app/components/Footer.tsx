@@ -191,13 +191,13 @@ const BottomFooter = ({ year }: { year: number }) => (
           © {year} GreenTouch Chemicals Pvt. Ltd. All rights reserved.
         </p>
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-          <Link href="/privacy" className="text-green-200/80 hover:text-white transition-colors">
+          <Link href="/privacy" className="link-underline text-green-200/80 hover:text-white transition-colors">
             Privacy Policy
           </Link>
-          <Link href="/terms" className="text-green-200/80 hover:text-white transition-colors">
+          <Link href="/terms" className="link-underline text-green-200/80 hover:text-white transition-colors">
             Terms of Service
           </Link>
-          <Link href="/cookies" className="text-green-200/80 hover:text-white transition-colors">
+          <Link href="/cookies" className="link-underline text-green-200/80 hover:text-white transition-colors">
             Cookie Policy
           </Link>
         </div>

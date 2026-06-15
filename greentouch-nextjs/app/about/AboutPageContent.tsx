@@ -97,13 +97,13 @@ export default function AboutPageContent() {
       </section>
 
       {/* Mission Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      <section className="py-16 bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-green-700 dark:text-green-500 mb-4">
               Our Mission
             </h2>
-            <div className="text-lg md:text-xl leading-relaxed max-w-3xl mx-auto text-gray-700 dark:text-gray-300">
+            <div className="text-lg md:text-xl leading-relaxed max-w-3xl mx-auto text-gray-700 dark:text-slate-300">
               <p className="mb-6">
                 At GreenTouch Chemicals Pvt. Ltd., we're committed to developing innovative, eco-friendly chemical
                 solutions that minimize environmental impact while maximizing performance.
@@ -116,7 +116,7 @@ export default function AboutPageContent() {
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="bg-green-50 dark:bg-green-900/30 p-8 rounded-xl shadow-sm">
               <h3 className="text-xl font-semibold text-green-700 dark:text-green-400 mb-4">Sustainability</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600 dark:text-slate-300">
                 We develop products with biodegradable ingredients and minimize waste throughout 
                 our production process.
               </p>
@@ -124,7 +124,7 @@ export default function AboutPageContent() {
             
             <div className="bg-green-50 dark:bg-green-900/30 p-8 rounded-xl shadow-sm">
               <h3 className="text-xl font-semibold text-green-700 dark:text-green-400 mb-4">Innovation</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600 dark:text-slate-300">
                 Our dedicated R&D team constantly explores new technologies and formulations 
                 to create more effective, environmentally-friendly solutions.
               </p>
@@ -132,7 +132,7 @@ export default function AboutPageContent() {
             
             <div className="bg-green-50 dark:bg-green-900/30 p-8 rounded-xl shadow-sm">
               <h3 className="text-xl font-semibold text-green-700 dark:text-green-400 mb-4">Integrity</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600 dark:text-slate-300">
                 We maintain transparency in our operations and hold ourselves to the highest 
                 ethical standards in everything we do.
               </p>
@@ -142,7 +142,7 @@ export default function AboutPageContent() {
       </section>
 
       {/* History Timeline */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      <section className="py-16 bg-gray-50 dark:bg-slate-800">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-green-700 dark:text-green-500 mb-12 text-center">
@@ -156,7 +156,7 @@ export default function AboutPageContent() {
                   <div className="absolute left-[-7px] top-4 w-4 h-4 rounded-full bg-green-700 dark:bg-green-500 md:hidden"></div>
                   <div className="md:w-1/2 md:pl-12 transition-all duration-300 hover:scale-[1.02]">
                     <div
-                      className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-lg hover:shadow-xl cursor-pointer"
+                      className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-lg hover:shadow-xl cursor-pointer"
                       onClick={() => setOpenTimeline(openTimeline === index ? null : index)}
                     >
                       <div className="flex items-center mb-4">
@@ -167,7 +167,7 @@ export default function AboutPageContent() {
                           {item.title}
                         </h3>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300">
+                      <p className="text-gray-600 dark:text-slate-300">
                         {openTimeline === index ? item.fullDescription : item.shortDescription}
                       </p>
                     </div>
@@ -207,7 +207,7 @@ export default function AboutPageContent() {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      <section className="py-16 bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-green-700 dark:text-green-500 mb-12 text-center">
             Our Leadership Team
@@ -215,7 +215,7 @@ export default function AboutPageContent() {
           
           <div className="grid md:grid-cols-3 gap-8">
             {teamMembers.map((member, index) => (
-              <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
+              <div key={index} className="bg-gray-50 dark:bg-slate-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
                 <div className="h-64 relative">
                   <Image
                     src={member.image}
@@ -226,8 +226,8 @@ export default function AboutPageContent() {
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-green-700 dark:text-green-500 mb-1">{member.name}</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">{member.role}</p>
-                  <p className="text-gray-600 dark:text-gray-300">{member.bio}</p>
+                  <p className="text-gray-500 dark:text-slate-400 mb-4">{member.role}</p>
+                  <p className="text-gray-600 dark:text-slate-300">{member.bio}</p>
                 </div>
               </div>
             ))}
@@ -236,10 +236,10 @@ export default function AboutPageContent() {
       </section>
 
       {/* Testimonial Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      <section className="py-16 bg-gray-50 dark:bg-slate-800">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 p-8 md:p-12 rounded-2xl shadow-lg text-center">
-            <blockquote className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 italic mb-6">
+          <div className="max-w-3xl mx-auto bg-white dark:bg-slate-900 p-8 md:p-12 rounded-2xl shadow-lg text-center">
+            <blockquote className="text-xl md:text-2xl text-gray-600 dark:text-slate-300 italic mb-6">
               "GreenTouch Chemicals Pvt. Ltd. has completely transformed our manufacturing process.
               Their eco-friendly solutions reduced our environmental footprint by 40% while
               improving our product quality."
@@ -247,8 +247,8 @@ export default function AboutPageContent() {
             <div className="flex items-center justify-center">
               <div className="w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center text-green-700 dark:text-green-300 font-semibold mr-4">AB</div>
               <div className="text-left">
-                <p className="font-semibold text-gray-800 dark:text-white">Anjali Bhatia</p>
-                <p className="text-gray-500 dark:text-gray-400">CEO, EcoManufacturing Ltd.</p>
+                <p className="font-semibold text-gray-800 dark:text-slate-100">Anjali Bhatia</p>
+                <p className="text-gray-500 dark:text-slate-400">CEO, EcoManufacturing Ltd.</p>
               </div>
             </div>
           </div>

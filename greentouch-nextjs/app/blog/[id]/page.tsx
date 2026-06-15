@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ArrowLeft, Calendar, Clock, Tag, User, ChevronRight } from 'lucide-react';
 import { getAllPostIds, getPostById, getRelatedPosts } from '../../lib/blog-data';
+import BlogCard from '../../components/cards/BlogCard';
 
 interface PageProps {
   params: { id: string };
@@ -36,7 +37,7 @@ export default function BlogPostPage({ params }: PageProps) {
   const related = getRelatedPosts(post.id);
 
   return (
-    <article className="bg-white dark:bg-gray-950">
+    <article className="bg-white dark:bg-slate-950">
       {/* Hero */}
       <header className="relative h-[50vh] min-h-[360px] w-full">
         <Image src={post.image} alt={post.title} fill priority className="object-cover" sizes="100vw" />
@@ -75,10 +76,10 @@ export default function BlogPostPage({ params }: PageProps) {
       {/* Body */}
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
-          <p className="text-xl text-gray-700 dark:text-gray-200 leading-relaxed mb-8 font-medium">
+          <p className="text-xl text-gray-700 dark:text-slate-200 leading-relaxed mb-8 font-medium">
             {post.excerpt}
           </p>
-          <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+          <div className="space-y-6 text-gray-700 dark:text-slate-300 leading-relaxed text-lg">
             {post.content.map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
@@ -95,8 +96,8 @@ export default function BlogPostPage({ params }: PageProps) {
                   .slice(0, 2)}
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Written by</p>
-                <p className="font-semibold text-gray-900 dark:text-white">{post.author}</p>
+                <p className="text-sm text-gray-500 dark:text-slate-400">Written by</p>
+                <p className="font-semibold text-gray-900 dark:text-slate-100">{post.author}</p>
               </div>
             </div>
             <Link
@@ -111,30 +112,12 @@ export default function BlogPostPage({ params }: PageProps) {
         {/* Related */}
         {related.length > 0 && (
           <div className="max-w-5xl mx-auto mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">Related Articles</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {related.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/blog/${item.id}`}
-                  className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                >
-                  <div className="relative h-40 overflow-hidden">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{item.date}</p>
-                    <h3 className="font-semibold text-gray-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors line-clamp-2">
-                      {item.title}
-                    </h3>
-                  </div>
-                </Link>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-8">
+              Related Articles
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {related.map((item, index) => (
+                <BlogCard key={item.id} post={item} index={index} />
               ))}
             </div>
           </div>

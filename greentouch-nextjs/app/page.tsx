@@ -13,15 +13,15 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col bg-white dark:bg-gray-900">
+    <div className="flex flex-col bg-white dark:bg-slate-900">
       <HeroSection />
-      <div className="py-4 bg-gradient-to-r from-green-50 to-white dark:bg-gray-900"></div>
+      <div className="py-4 bg-gradient-to-r from-green-50 to-white dark:bg-slate-900"></div>
       <FeaturesSection />
-      <div className="py-4 bg-white dark:bg-gray-900"></div>
+      <div className="py-4 bg-white dark:bg-slate-900"></div>
       <ProductsSection />
-      <div className="py-4 bg-gradient-to-r from-white to-green-50 dark:bg-gray-900"></div>
+      <div className="py-4 bg-gradient-to-r from-white to-green-50 dark:bg-slate-900"></div>
       <TestimonialsSection />
-      <div className="py-4 bg-gradient-to-b from-white to-green-50 dark:bg-gray-900"></div>
+      <div className="py-4 bg-gradient-to-b from-white to-green-50 dark:bg-slate-900"></div>
       <CtaSection />
     </div>
   );

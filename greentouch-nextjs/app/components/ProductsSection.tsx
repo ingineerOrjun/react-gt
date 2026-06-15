@@ -1,9 +1,10 @@
 "use client";
 
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import ProductCard from './cards/ProductCard';
+import { fadeUp, revealViewport } from './ui/motion';
 
 const products = [
   {
@@ -40,64 +41,47 @@ const industries = ['Pharmaceuticals', 'Agriculture', 'Water Treatment', 'Manufa
 
 export default function ProductsSection() {
   return (
-    <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
+    <section className="py-16 md:py-24 bg-white dark:bg-slate-900">
       <div className="container mx-auto px-4">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-4xl font-bold text-green-700 dark:text-green-400 text-center mb-12"
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={revealViewport}
+          className="text-center max-w-3xl mx-auto mb-14"
         >
-          Our Products &amp; Services
-        </motion.h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+            Our Products &amp; Services
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            Effective, eco-conscious cleaning solutions crafted for everyday homes and demanding
+            industries alike.
+          </p>
+        </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {products.map((product, index) => (
-            <motion.div
+            <ProductCard
               key={product.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.45, delay: (index % 4) * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 border border-green-100 dark:border-gray-700 flex flex-col"
-            >
-              <div className="relative h-64 w-full overflow-hidden">
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-semibold mb-2 text-green-700 dark:text-green-400">
-                  {product.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 flex-grow">
-                  {product.description}
-                </p>
-                <Link
-                  href="/products"
-                  className="inline-block text-green-700 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 font-medium mt-auto"
-                >
-                  Learn more →
-                </Link>
-              </div>
-            </motion.div>
+              title={product.title}
+              description={product.description}
+              image={product.image}
+              href="/products"
+              cta="Learn more"
+              index={index}
+            />
           ))}
         </div>
 
-        <div className="mt-16">
-          <h3 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-8">
+        <div className="mt-20">
+          <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-8">
             Industries We Serve
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {industries.map((industry) => (
               <div
                 key={industry}
-                className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg text-center hover:bg-green-100 dark:hover:bg-gray-700 transition-colors duration-300 border border-green-200 dark:border-gray-700"
+                className="bg-green-50 dark:bg-slate-800/60 p-6 rounded-xl text-center border border-green-100 dark:border-slate-700/60 hover:border-green-300 dark:hover:border-green-700/60 hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out"
               >
                 <p className="font-semibold text-green-700 dark:text-green-400">{industry}</p>
               </div>
@@ -105,17 +89,17 @@ export default function ProductsSection() {
           </div>
         </div>
 
-        <div className="mt-16 bg-gradient-to-r from-green-50 to-green-100 dark:from-gray-800 dark:to-gray-800 p-8 rounded-xl border border-green-200 dark:border-gray-700">
-          <h3 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-4">
+        <div className="mt-16 bg-gradient-to-r from-green-50 to-green-100 dark:from-slate-800 dark:to-slate-800/60 p-8 md:p-10 rounded-2xl border border-green-200 dark:border-slate-700/60">
+          <h3 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-3">
             Technical Specifications
           </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-6">
+          <p className="text-slate-700 dark:text-slate-300 mb-6 max-w-2xl leading-relaxed">
             Need detailed technical specifications and safety guidelines for our products? Our team is
             happy to help.
           </p>
           <Link
             href="/contact"
-            className="inline-block px-6 py-3 bg-green-700 text-white font-medium rounded-lg shadow-md hover:bg-green-800 hover:-translate-y-0.5 transition duration-300"
+            className="inline-block px-6 py-3 bg-green-700 text-white font-medium rounded-lg shadow-md hover:bg-green-800 hover:-translate-y-0.5 hover:scale-[1.02] transition duration-300 ease-out"
           >
             Request Documentation
           </Link>

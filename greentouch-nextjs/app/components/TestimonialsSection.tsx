@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Quote } from 'lucide-react';
+import TestimonialCard from './cards/TestimonialCard';
+import { fadeUp, revealViewport } from './ui/motion';
 
 const testimonials = [
   {
@@ -27,56 +28,32 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-b from-green-50 to-white dark:from-gray-800 dark:to-gray-900">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-green-50 to-white dark:from-slate-950 dark:to-slate-900">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={revealViewport}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             What Our Clients Say
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             We&apos;re proud to partner with forward-thinking companies committed to sustainability.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.45, delay: index * 0.12 }}
-              className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative"
-            >
-              <div className="absolute top-0 right-0 w-12 h-12 -mt-4 -mr-4 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                <Quote className="h-6 w-6 text-white" />
-              </div>
-
-              <p className="text-gray-700 dark:text-gray-300 italic mb-6">
-                &ldquo;{testimonial.quote}&rdquo;
-              </p>
-
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-semibold flex items-center justify-center mr-3">
-                  {testimonial.author
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')}
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">
-                    {testimonial.author}
-                  </h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.position}</p>
-                </div>
-              </div>
-            </motion.div>
+            <TestimonialCard
+              key={testimonial.author}
+              quote={testimonial.quote}
+              author={testimonial.author}
+              position={testimonial.position}
+              index={index}
+            />
           ))}
         </div>
       </div>
