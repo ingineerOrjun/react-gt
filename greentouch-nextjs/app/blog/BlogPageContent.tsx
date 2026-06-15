@@ -4,27 +4,21 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ChevronRight, Search, Filter } from 'lucide-react';
-import { blogPosts, type BlogPost } from '../lib/blog-data';
+import { Calendar, ChevronRight, Search, FileText } from 'lucide-react';
 import BlogCard from '../components/cards/BlogCard';
 import { fadeUp, revealViewport } from '../components/ui/motion';
+import type { BlogCardView } from '../lib/queries/public';
 
-export default function BlogPageContent() {
+export default function BlogPageContent({ posts }: { posts: BlogCardView[] }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const uniqueCategories = Array.from(new Set(blogPosts.map((post) => post.category)));
-  const categories = ['all', ...uniqueCategories];
+  const featuredPost = posts[0];
+  const rest = posts.slice(1);
 
-  const filteredPosts = blogPosts.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+  const filteredPosts = (featuredPost ? rest : posts).filter((post) => {
+    const q = searchQuery.toLowerCase();
+    return post.title.toLowerCase().includes(q) || post.excerpt.toLowerCase().includes(q);
   });
-
-  const featuredPost = blogPosts.find((post) => post.featured);
 
   return (
     <div className="min-h-screen py-16 md:py-20 bg-gray-50 dark:bg-slate-950">
@@ -54,60 +48,53 @@ export default function BlogPageContent() {
           </p>
         </motion.div>
 
-        {/* Search & filter */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
-          <div className="relative flex-grow max-w-md">
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-slate-800 dark:text-slate-100 transition"
-            />
-            <Search className="absolute left-3 top-3.5 h-5 w-5 text-slate-400 dark:text-slate-500" />
-          </div>
-
-          <div className="flex items-center flex-wrap gap-2">
-            <Filter className="h-5 w-5 text-green-600 dark:text-green-400" />
-            <span className="text-slate-700 dark:text-slate-300 font-medium mr-1">Filter:</span>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium capitalize transition-all duration-200 ${
-                  selectedCategory === category
-                    ? 'bg-green-600 text-white shadow'
-                    : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Posts grid */}
-        {filteredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {filteredPosts.map((post, index) => (
-              <BlogCard key={post.id} post={post} index={index} />
-            ))}
+        {posts.length === 0 ? (
+          <div className="text-center py-16 max-w-md mx-auto">
+            <FileText className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
+              No articles yet
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400">
+              Check back soon for the latest insights from our team.
+            </p>
           </div>
         ) : (
-          <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
-            <p className="text-slate-600 dark:text-slate-300 text-lg">
-              No articles found matching your search criteria.
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('all');
-              }}
-              className="mt-4 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium flex items-center mx-auto"
-            >
-              Clear filters <ChevronRight className="h-4 w-4 ml-1" />
-            </button>
-          </div>
+          <>
+            {/* Search */}
+            <div className="flex justify-center mb-12">
+              <div className="relative w-full max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search articles"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-slate-800 dark:text-slate-100 transition"
+                />
+                <Search className="absolute left-3 top-3.5 h-5 w-5 text-slate-400 dark:text-slate-500" />
+              </div>
+            </div>
+
+            {filteredPosts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                {filteredPosts.map((post, index) => (
+                  <BlogCard key={post.id} post={post} index={index} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
+                <p className="text-slate-600 dark:text-slate-300 text-lg">
+                  No articles match “{searchQuery}”.
+                </p>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="mt-4 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium inline-flex items-center"
+                >
+                  Clear search <ChevronRight className="h-4 w-4 ml-1" />
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Newsletter */}
@@ -124,6 +111,7 @@ export default function BlogPageContent() {
                   type="email"
                   required
                   placeholder="Your email address"
+                  aria-label="Email address"
                   className="flex-grow px-4 py-3 rounded-lg sm:rounded-r-none focus:outline-none text-slate-700"
                 />
                 <button className="bg-green-900 hover:bg-green-800 hover:scale-[1.02] text-white px-6 py-3 rounded-lg sm:rounded-l-none font-medium transition-all duration-300 ease-out">
@@ -148,23 +136,29 @@ export default function BlogPageContent() {
   );
 }
 
-const FeaturedPost = ({ post }: { post: BlogPost }) => (
+const FeaturedPost = ({ post }: { post: BlogCardView }) => (
   <motion.div
     variants={fadeUp}
     initial="hidden"
     whileInView="visible"
     viewport={revealViewport}
-    className="group relative rounded-2xl overflow-hidden shadow-xl transition-shadow duration-300 hover:shadow-2xl"
+    className="group relative rounded-2xl overflow-hidden shadow-xl transition-shadow duration-300 hover:shadow-2xl bg-slate-100 dark:bg-slate-900"
   >
     <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden">
-      <Image
-        src={post.image}
-        alt={post.title}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
-      />
+      {post.imageUrl ? (
+        <Image
+          src={post.imageUrl}
+          alt={post.title}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
+          <FileText className="h-12 w-12" />
+        </div>
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
     </div>
 
@@ -177,17 +171,13 @@ const FeaturedPost = ({ post }: { post: BlogPost }) => (
           <Calendar className="h-4 w-4 mr-1 opacity-80" />
           {post.date}
         </span>
-        <span className="flex items-center text-sm">
-          <Clock className="h-4 w-4 mr-1 opacity-80" />
-          {post.readTime}
-        </span>
       </div>
 
       <h2 className="text-2xl md:text-3xl font-bold mb-3 leading-tight max-w-3xl">{post.title}</h2>
       <p className="text-gray-200 mb-4 max-w-3xl leading-relaxed line-clamp-2">{post.excerpt}</p>
 
       <Link
-        href={`/blog/${post.id}`}
+        href={`/blog/${post.slug}`}
         className="inline-flex items-center text-white bg-green-600 hover:bg-green-700 hover:scale-[1.02] px-4 py-2 rounded-lg font-medium transition-all duration-300 ease-out"
       >
         Read Article <ChevronRight className="ml-1 h-4 w-4" />

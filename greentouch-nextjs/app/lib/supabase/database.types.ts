@@ -63,42 +63,88 @@ export interface ProfileRow {
   created_at: string;
 }
 
-type WithDefaults<T, OptionalKeys extends keyof T> = Omit<T, OptionalKeys> &
-  Partial<Pick<T, OptionalKeys>>;
-
 export interface Database {
   public: {
     Tables: {
       products: {
         Row: ProductRow;
-        Insert: WithDefaults<
-          ProductRow,
-          'id' | 'image_path' | 'published' | 'published_at' | 'display_order' | 'created_by' | 'created_at' | 'updated_at'
-        >;
+        Insert: {
+          id?: string;
+          name: string;
+          slug: string;
+          description: string;
+          image_path?: string | null;
+          published?: boolean;
+          published_at?: string | null;
+          display_order?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: Partial<ProductRow>;
+        Relationships: [];
       };
       blogs: {
         Row: BlogRow;
-        Insert: WithDefaults<
-          BlogRow,
-          'id' | 'image_path' | 'published' | 'published_at' | 'display_order' | 'created_by' | 'created_at' | 'updated_at'
-        >;
+        Insert: {
+          id?: string;
+          title: string;
+          slug: string;
+          excerpt: string;
+          content: string;
+          image_path?: string | null;
+          published?: boolean;
+          published_at?: string | null;
+          display_order?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: Partial<BlogRow>;
+        Relationships: [];
       };
       contact_messages: {
         Row: ContactMessageRow;
-        Insert: WithDefaults<ContactMessageRow, 'id' | 'status' | 'created_at'>;
+        Insert: {
+          id?: string;
+          name: string;
+          email: string;
+          subject: string;
+          message: string;
+          status?: ContactMessageRow['status'];
+          created_at?: string;
+        };
         Update: Partial<ContactMessageRow>;
+        Relationships: [];
       };
       site_settings: {
         Row: SiteSettingsRow;
-        Insert: WithDefaults<SiteSettingsRow, 'id' | 'singleton' | 'updated_at'>;
+        Insert: {
+          id?: string;
+          singleton?: boolean;
+          site_title?: string;
+          contact_email?: string;
+          contact_phone?: string | null;
+          address?: string | null;
+          facebook_url?: string | null;
+          twitter_url?: string | null;
+          instagram_url?: string | null;
+          linkedin_url?: string | null;
+          updated_at?: string;
+        };
         Update: Partial<SiteSettingsRow>;
+        Relationships: [];
       };
       profiles: {
         Row: ProfileRow;
-        Insert: WithDefaults<ProfileRow, 'full_name' | 'role' | 'created_at'>;
+        Insert: {
+          id: string;
+          full_name?: string | null;
+          role?: 'admin';
+          created_at?: string;
+        };
         Update: Partial<ProfileRow>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
@@ -106,5 +152,6 @@ export interface Database {
       is_admin: { Args: Record<string, never>; Returns: boolean };
     };
     Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }

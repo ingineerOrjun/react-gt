@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import { submitContactForm } from '../lib/api/contactService';
+import { submitContact } from '../lib/actions/contact';
 import { isValidEmail } from '../lib/utils';
 import { VALIDATION_MESSAGES } from '../lib/constants';
 
@@ -26,6 +26,7 @@ const ContactForm = () => {
     company: '',
     subject: '',
     message: '',
+    website: '', // honeypot — must stay empty
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -84,10 +85,10 @@ const ContactForm = () => {
     setSubmitError('');
 
     try {
-      const response = await submitContactForm(formData);
+      const response = await submitContact(formData);
       if (response.success) {
         setSubmitSuccess(true);
-        setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '', website: '' });
       } else {
         setSubmitError(response.message || 'Failed to submit the form. Please try again later.');
       }
@@ -122,6 +123,20 @@ const ContactForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Honeypot: hidden from users, bots tend to fill it. */}
+      <div className="absolute left-[-9999px]" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input
+          type="text"
+          id="website"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={formData.website}
+          onChange={handleChange}
+        />
+      </div>
+
       {submitError && (
         <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 p-4 rounded-lg">
           {submitError}

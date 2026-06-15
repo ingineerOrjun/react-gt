@@ -4,18 +4,18 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Tag, ChevronRight } from 'lucide-react';
-import type { BlogPost } from '../../lib/blog-data';
+import { Calendar, ChevronRight, FileText } from 'lucide-react';
+import type { BlogCardView } from '../../lib/queries/public';
 import { cardEntrance, hoverLift, hoverTransition, revealViewport } from '../ui/motion';
 
 interface BlogCardProps {
-  post: BlogPost;
+  post: BlogCardView;
   index?: number;
   priority?: boolean;
 }
 
 export default function BlogCard({ post, index = 0, priority = false }: BlogCardProps) {
-  const href = `/blog/${post.id}`;
+  const href = `/blog/${post.slug}`;
   return (
     <motion.article
       custom={index}
@@ -31,27 +31,26 @@ export default function BlogCard({ post, index = 0, priority = false }: BlogCard
         href={href}
         className="relative aspect-[16/9] overflow-hidden block bg-slate-100 dark:bg-slate-900"
       >
-        <Image
-          src={post.image}
-          alt={post.title}
-          fill
-          priority={priority}
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover object-center transition-transform duration-300 ease-out group-hover:scale-105"
-        />
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {post.imageUrl ? (
+          <Image
+            src={post.imageUrl}
+            alt={post.title}
+            fill
+            priority={priority}
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover object-center transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
+            <FileText className="h-10 w-10" />
+          </div>
+        )}
       </Link>
 
       <div className="flex flex-col flex-grow p-6">
-        <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 gap-4 mb-3">
-          <span className="flex items-center">
-            <Calendar className="h-4 w-4 mr-1" />
-            {post.date}
-          </span>
-          <span className="flex items-center">
-            <Clock className="h-4 w-4 mr-1" />
-            {post.readTime}
-          </span>
+        <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 gap-2 mb-3">
+          <Calendar className="h-4 w-4" />
+          {post.date}
         </div>
 
         <h3 className="text-xl font-semibold mb-2 leading-snug text-slate-900 dark:text-slate-100">
@@ -64,19 +63,13 @@ export default function BlogCard({ post, index = 0, priority = false }: BlogCard
           {post.excerpt}
         </p>
 
-        <div className="flex items-center justify-between mt-auto">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 capitalize">
-            <Tag className="h-3 w-3 mr-1" />
-            {post.category}
-          </span>
-          <Link
-            href={href}
-            className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium flex items-center"
-          >
-            Read more
-            <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-        </div>
+        <Link
+          href={href}
+          className="mt-auto text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium inline-flex items-center"
+        >
+          Read more
+          <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </Link>
       </div>
     </motion.article>
   );

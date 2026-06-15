@@ -1,62 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Filter, ChevronRight } from 'lucide-react';
+import { ChevronRight, PackageSearch } from 'lucide-react';
 import ProductCard from '../components/cards/ProductCard';
 import { fadeUp, revealViewport } from '../components/ui/motion';
-
-const products = [
-  {
-    id: 1,
-    image: '/images/products/pd2.jpeg',
-    title: 'Prithvi Phenyl',
-    description:
-      'Keep your home fresh and germ-free with Prithvi Phenyl, a powerful disinfectant that removes stains and odors for a spotless clean.',
-    category: 'household',
-  },
-  {
-    id: 2,
-    image: '/images/products/pd1.jpeg',
-    title: 'Prithvi Liquid Blue',
-    description:
-      'Enhance your whites with Prithvi Liquid Blue, delivering a bright, long-lasting shine to your fabrics with every wash.',
-    category: 'laundry',
-  },
-  {
-    id: 3,
-    image: '/images/products/pd3.jpeg',
-    title: 'Prithvi Tiles Cleaner',
-    description:
-      'Restore the sparkle of your floors with Prithvi Tiles Cleaner, an effective formula that removes tough stains, grime, and watermarks effortlessly.',
-    category: 'household',
-  },
-  {
-    id: 4,
-    image: '/images/products/pd4.jpeg',
-    title: 'Prithvi Glass Cleaner',
-    description:
-      'Get crystal clear windows and mirrors with Prithvi Glass Cleaner, leaving no streaks or residue behind for perfect clarity.',
-    category: 'household',
-  },
-  {
-    id: 5,
-    image: '/images/products/pd5.jpeg',
-    title: 'Prithvi Dishwash Liquid',
-    description:
-      'Our powerful yet gentle dishwashing liquid cuts through grease while being kind to your hands and the environment.',
-    category: 'kitchen',
-  },
-  {
-    id: 6,
-    image: '/images/products/bb.jpeg',
-    title: 'Prithvi All-Purpose Cleaner',
-    description:
-      'A versatile cleaning solution that works on multiple surfaces, making it perfect for all your household cleaning needs.',
-    category: 'household',
-  },
-];
+import type { ProductView } from '../lib/queries/public';
 
 const industries = [
   'Pharmaceuticals',
@@ -67,16 +17,7 @@ const industries = [
   'Education',
 ];
 
-const uniqueCategories = Array.from(new Set(products.map((product) => product.category)));
-const categories = ['all', ...uniqueCategories];
-
-export default function ProductsPageContent() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const filteredProducts = products.filter(
-    (product) => selectedCategory === 'all' || product.category === selectedCategory
-  );
-
+export default function ProductsPageContent({ products }: { products: ProductView[] }) {
   return (
     <>
       {/* Hero */}
@@ -127,38 +68,35 @@ export default function ProductsPageContent() {
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="flex items-center justify-center mb-12 flex-wrap gap-3">
-            <Filter className="h-5 w-5 text-green-600 dark:text-green-400" />
-            <span className="text-slate-700 dark:text-slate-300 font-medium mr-1">Filter by:</span>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all duration-200 ${
-                  selectedCategory === category
-                    ? 'bg-green-600 text-white shadow'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  title={product.name}
+                  description={product.description}
+                  image={product.imageUrl}
+                  index={index}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 max-w-md mx-auto">
+              <PackageSearch className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                No products yet
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">
+                Our catalogue is being updated. Reach out and we&apos;ll be glad to help.
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
               >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {filteredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                title={product.title}
-                description={product.description}
-                image={product.image}
-                category={product.category}
-                index={index}
-              />
-            ))}
-          </div>
+                Contact us <ChevronRight className="ml-1 h-4 w-4" />
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

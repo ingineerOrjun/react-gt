@@ -5,41 +5,11 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import ProductCard from './cards/ProductCard';
 import { fadeUp, revealViewport } from './ui/motion';
-
-const products = [
-  {
-    id: 1,
-    image: '/images/products/pd2.jpeg',
-    title: 'Prithvi Phenyl',
-    description:
-      'Keep your home fresh and germ-free with Prithvi Phenyl, a powerful disinfectant that removes stains and odors for a spotless clean.',
-  },
-  {
-    id: 2,
-    image: '/images/products/pd1.jpeg',
-    title: 'Prithvi Liquid Blue',
-    description:
-      'Enhance your whites with Prithvi Liquid Blue, delivering a bright, long-lasting shine to your fabrics with every wash.',
-  },
-  {
-    id: 3,
-    image: '/images/products/pd3.jpeg',
-    title: 'Prithvi Tiles Cleaner',
-    description:
-      'Restore the sparkle of your floors with Prithvi Tiles Cleaner, an effective formula that removes tough stains, grime, and watermarks effortlessly.',
-  },
-  {
-    id: 4,
-    image: '/images/products/pd4.jpeg',
-    title: 'Prithvi Glass Cleaner',
-    description:
-      'Get crystal clear windows and mirrors with Prithvi Glass Cleaner, leaving no streaks or residue behind for perfect clarity.',
-  },
-];
+import type { ProductView } from '../lib/queries/public';
 
 const industries = ['Pharmaceuticals', 'Agriculture', 'Water Treatment', 'Manufacturing'];
 
-export default function ProductsSection() {
+export default function ProductsSection({ products }: { products: ProductView[] }) {
   return (
     <section className="py-16 md:py-24 bg-white dark:bg-slate-900">
       <div className="container mx-auto px-4">
@@ -59,19 +29,29 @@ export default function ProductsSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              title={product.title}
-              description={product.description}
-              image={product.image}
-              href="/products"
-              cta="Learn more"
-              index={index}
-            />
-          ))}
-        </div>
+        {products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {products.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                title={product.name}
+                description={product.description}
+                image={product.imageUrl}
+                href="/products"
+                cta="Learn more"
+                index={index}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-slate-500 dark:text-slate-400">
+            Our product range is coming soon. Please{' '}
+            <Link href="/contact" className="text-green-600 dark:text-green-400 hover:underline">
+              contact us
+            </Link>{' '}
+            for details.
+          </p>
+        )}
 
         <div className="mt-20">
           <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-8">

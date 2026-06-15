@@ -4,13 +4,13 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Package } from 'lucide-react';
 import { cardEntrance, hoverLift, hoverTransition, revealViewport } from '../ui/motion';
 
 interface ProductCardProps {
   title: string;
   description: string;
-  image: string;
+  image: string | null;
   category?: string;
   href?: string;
   cta?: string;
@@ -39,13 +39,19 @@ export default function ProductCard({
     >
       {/* object-contain so product labels are never cropped; soft backdrop fills the letterboxing */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain object-center p-3 transition-transform duration-300 ease-out group-hover:scale-105"
-        />
+        {image ? (
+          <Image
+            src={image}
+            alt={title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-contain object-center p-3 transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
+            <Package className="h-12 w-12" />
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col flex-grow p-6">
