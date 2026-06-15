@@ -1,0 +1,8 @@
+// Browser client (anon key, RLS-enforced). Use inside Client Components.
+import { createBrowserClient } from '@supabase/ssr';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../env';
+import type { Database } from './database.types';
+
+export function createClient() {
+  return createBrowserClient<Database>(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+}
