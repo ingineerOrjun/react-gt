@@ -31,4 +31,25 @@ export async function getAdminProduct(id: string): Promise<ProductRow | null> {
   return data as unknown as ProductRow;
 }
 
+export async function getAdminMessages(): Promise<ContactMessageRow[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return data as unknown as ContactMessageRow[];
+}
+
+export async function getAdminMessage(id: string): Promise<ContactMessageRow | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as unknown as ContactMessageRow;
+}
+
 export type { BlogRow, ContactMessageRow };
