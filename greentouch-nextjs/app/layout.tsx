@@ -21,6 +21,29 @@ const poppins = Poppins({
 
 const siteUrl = 'https://greentouchchemicals.com';
 
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'GreenTouch Chemicals Pvt. Ltd.',
+  url: siteUrl,
+  logo: `${siteUrl}/icon.svg`,
+  description: 'Eco-friendly chemical products and sustainable solutions.',
+  email: 'greentouchgrouppvtltd.1@gmail.com',
+  telephone: '+977-9801603296',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Kushwaha Chock Dhalkebar',
+    addressRegion: 'Dhanusa',
+    addressCountry: 'NP',
+  },
+  sameAs: [
+    'https://facebook.com/greentouchchemicalsindustries',
+    'https://twitter.com/greentouchchem',
+    'https://instagram.com/greentouchchemicalsindustries',
+    'https://linkedin.com/company/greentouch-chemical-industries',
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -64,6 +87,10 @@ export default function RootLayout({
       className={`${inter.variable} ${poppins.variable} scroll-smooth`}
     >
       <body className="font-sans antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 selection:bg-green-200 selection:text-green-900">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <Providers>
           <a
             href="#main-content"
