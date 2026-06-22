@@ -31,6 +31,31 @@ export async function getAdminProduct(id: string): Promise<ProductRow | null> {
   return data as unknown as ProductRow;
 }
 
+export interface AdminBlog extends BlogRow {
+  imageUrl: string | null;
+}
+
+export async function getAdminBlogs(): Promise<AdminBlog[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('blogs')
+    .select('*')
+    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return (data as unknown as BlogRow[]).map((b) => ({
+    ...b,
+    imageUrl: publicImageUrl('blogs', b.image_path),
+  }));
+}
+
+export async function getAdminBlog(id: string): Promise<BlogRow | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('blogs').select('*').eq('id', id).maybeSingle();
+  if (error || !data) return null;
+  return data as unknown as BlogRow;
+}
+
 export async function getAdminMessages(): Promise<ContactMessageRow[]> {
   const supabase = createClient();
   const { data, error } = await supabase

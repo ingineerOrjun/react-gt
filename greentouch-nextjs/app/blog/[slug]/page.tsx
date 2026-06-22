@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { ArrowLeft, Calendar, ChevronRight, FileText } from 'lucide-react';
 import BlogCard from '../../components/cards/BlogCard';
 import { getBlogBySlug, getPublishedBlogSlugs, getRelatedBlogs } from '../../lib/queries/public';
+import { sanitizeHtml } from '../../lib/sanitize';
 
 interface PageProps {
   params: { slug: string };
@@ -38,6 +39,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) notFound();
 
   const related = await getRelatedBlogs(post.slug);
+  // Tiptap stores HTML; legacy/seed rows are plain text with blank-line breaks.
+  const isHtml = /<[a-z][\s\S]*>/i.test(post.content);
   const paragraphs = post.content.split(/\n{2,}/).filter((p) => p.trim().length > 0);
 
   return (
@@ -75,11 +78,18 @@ export default async function BlogPostPage({ params }: PageProps) {
           <p className="text-xl text-slate-700 dark:text-slate-200 leading-relaxed mb-8 font-medium">
             {post.excerpt}
           </p>
-          <div className="space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
-            {paragraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+          {isHtml ? (
+            <div
+              className="prose dark:prose-invert max-w-none prose-a:text-green-600 dark:prose-a:text-green-400 prose-headings:text-slate-900 dark:prose-headings:text-slate-100"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
+            />
+          ) : (
+            <div className="space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+              {paragraphs.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+          )}
 
           <div className="mt-12 p-6 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-slate-700 dark:text-slate-200 font-medium">
