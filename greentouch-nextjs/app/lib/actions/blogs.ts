@@ -84,17 +84,24 @@ export async function saveBlog(_prev: BlogFormState, formData: FormData): Promis
     blogId = (data as unknown as { id: string }).id;
   }
 
-  // Featured image (optional)
+  // Featured image (optional). Clean up a freshly-created row if upload fails.
+  const justCreated = !id;
   let imagePath = existing?.image_path ?? null;
   const file = formData.get('image') as File | null;
   if (file && file.size > 0) {
     const invalid = validateImage(file);
-    if (invalid) return { error: invalid };
+    if (invalid) {
+      if (justCreated) await supabase.from('blogs').delete().eq('id', blogId!);
+      return { error: invalid };
+    }
     const key = buildObjectKey(blogId!, file.name);
     const { error: upErr } = await supabase.storage
       .from(BUCKET)
       .upload(key, file, { contentType: file.type, upsert: false });
-    if (upErr) return { error: 'Image upload failed. Please try again.' };
+    if (upErr) {
+      if (justCreated) await supabase.from('blogs').delete().eq('id', blogId!);
+      return { error: 'Image upload failed. Please try again.' };
+    }
     if (imagePath && imagePath !== key) {
       await supabase.storage.from(BUCKET).remove([imagePath]);
     }

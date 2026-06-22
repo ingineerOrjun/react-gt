@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google';
 import { Providers } from './providers';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import SiteMain from './components/SiteMain';
 import './globals.css';
 
 const inter = Inter({
@@ -64,8 +65,14 @@ export default function RootLayout({
     >
       <body className="font-sans antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 selection:bg-green-200 selection:text-green-900">
         <Providers>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-3 focus:left-3 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-green-600 focus:text-white"
+          >
+            Skip to content
+          </a>
           <Navbar />
-          <main className="flex-grow pt-20">{children}</main>
+          <SiteMain>{children}</SiteMain>
           <Footer />
         </Providers>
       </body>

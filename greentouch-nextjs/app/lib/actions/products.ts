@@ -83,17 +83,25 @@ export async function saveProduct(
     productId = (data as unknown as { id: string }).id;
   }
 
-  // Handle image upload (optional)
+  // Handle image upload (optional). If anything fails on a freshly-created row,
+  // delete that row so we never leave an orphaned draft behind.
+  const justCreated = !id;
   let imagePath = existing?.image_path ?? null;
   const file = formData.get('image') as File | null;
   if (file && file.size > 0) {
     const invalid = validateImage(file);
-    if (invalid) return { error: invalid };
+    if (invalid) {
+      if (justCreated) await supabase.from('products').delete().eq('id', productId!);
+      return { error: invalid };
+    }
     const key = buildObjectKey(productId!, file.name);
     const { error: upErr } = await supabase.storage
       .from(BUCKET)
       .upload(key, file, { contentType: file.type, upsert: false });
-    if (upErr) return { error: 'Image upload failed. Please try again.' };
+    if (upErr) {
+      if (justCreated) await supabase.from('products').delete().eq('id', productId!);
+      return { error: 'Image upload failed. Please try again.' };
+    }
     if (imagePath && imagePath !== key) {
       await supabase.storage.from(BUCKET).remove([imagePath]);
     }

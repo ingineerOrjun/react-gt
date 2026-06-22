@@ -32,6 +32,9 @@ export default function Navbar() {
     return pathname.startsWith(path);
   };
 
+  // The admin area has its own chrome (sidebar); don't show the marketing nav.
+  if (pathname?.startsWith('/admin')) return null;
+
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${

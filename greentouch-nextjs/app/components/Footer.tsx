@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Mail,
   Phone,
@@ -31,6 +32,10 @@ const QUICK_LINKS = [
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+
+  // Admin routes have their own layout; hide the marketing footer there.
+  if (pathname?.startsWith('/admin')) return null;
 
   return (
     <footer className="bg-gradient-to-b from-green-800 to-green-950 text-white relative overflow-hidden">
