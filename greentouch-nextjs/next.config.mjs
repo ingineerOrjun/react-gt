@@ -1,6 +1,12 @@
+import { withSentryConfig } from '@sentry/nextjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Enables instrumentation.ts (Sentry server/edge init) on Next 14.2.
+    instrumentationHook: true,
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -8,6 +14,17 @@ const nextConfig = {
       { protocol: 'https', hostname: '*.supabase.co' },
       { protocol: 'https', hostname: '*.supabase.in' },
     ],
+  },
+  async redirects() {
+    return [
+      // Canonicalize www -> apex (no-op locally; active once the domain is attached).
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.greentouchchemicals.com' }],
+        destination: 'https://greentouchchemicals.com/:path*',
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [
@@ -32,4 +49,12 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// Sentry build wrapper. Source-map upload only runs when SENTRY_AUTH_TOKEN is
+// present (CI/prod); otherwise it's a no-op and the app builds normally.
+export default withSentryConfig(nextConfig, {
+  silent: true,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  disableLogger: true,
+  widenClientFileUpload: true,
+});

@@ -1,10 +1,13 @@
 import { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Providers } from './providers';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SiteMain from './components/SiteMain';
 import './globals.css';
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 const inter = Inter({
   subsets: ['latin'],
@@ -102,6 +105,7 @@ export default function RootLayout({
           <SiteMain>{children}</SiteMain>
           <Footer />
         </Providers>
+        {gaId && <GoogleAnalytics gaId={gaId} />}
       </body>
     </html>
   );

@@ -1,0 +1,13 @@
+import * as Sentry from '@sentry/nextjs';
+
+const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+
+Sentry.init({
+  dsn,
+  enabled: Boolean(dsn),
+  tracesSampleRate: 0.1,
+  // Keep the client bundle lean; enable replays later if needed.
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0,
+  environment: process.env.VERCEL_ENV ?? process.env.NODE_ENV,
+});
