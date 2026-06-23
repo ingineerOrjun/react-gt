@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Script from 'next/script';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { submitContact } from '../lib/actions/contact';
 import { isValidEmail } from '../lib/utils';
 import { VALIDATION_MESSAGES } from '../lib/constants';
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const subjects = [
   'General Inquiry',
@@ -33,6 +36,38 @@ const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  // Cloudflare Turnstile. Only active when a site key is configured; otherwise
+  // the widget is omitted and the token gate is skipped (graceful degradation).
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  const renderTurnstile = useCallback(() => {
+    if (!TURNSTILE_SITE_KEY || !turnstileRef.current || !window.turnstile) return;
+    if (widgetIdRef.current !== null) return; // already rendered
+    widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      action: 'contact',
+      theme: 'auto',
+      callback: (token: string) => setTurnstileToken(token),
+      'expired-callback': () => setTurnstileToken(''),
+      'error-callback': () => setTurnstileToken(''),
+    });
+  }, []);
+
+  // If the script was already loaded (e.g. client-side navigation back to the
+  // page), render immediately rather than waiting for the onLoad event.
+  useEffect(() => {
+    if (TURNSTILE_SITE_KEY && window.turnstile) renderTurnstile();
+  }, [renderTurnstile]);
+
+  const resetTurnstile = useCallback(() => {
+    if (widgetIdRef.current !== null && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current);
+    }
+    setTurnstileToken('');
+  }, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -81,11 +116,17 @@ const ContactForm = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    // Gate on the Turnstile token only when the widget is active.
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      setSubmitError('Please complete the security check below before sending.');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError('');
 
     try {
-      const response = await submitContact(formData);
+      const response = await submitContact({ ...formData, turnstileToken });
       if (response.success) {
         setSubmitSuccess(true);
         setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '', website: '' });
@@ -96,6 +137,8 @@ const ContactForm = () => {
       console.error('Error submitting form:', error);
       setSubmitError('An unexpected error occurred. Please try again later.');
     } finally {
+      // A token is single-use; reset the widget so a retry gets a fresh one.
+      resetTurnstile();
       setIsSubmitting(false);
     }
   };
@@ -123,6 +166,14 @@ const ContactForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {TURNSTILE_SITE_KEY && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
+          onLoad={renderTurnstile}
+        />
+      )}
+
       {/* Honeypot: hidden from users, bots tend to fill it. */}
       <div className="absolute left-[-9999px]" aria-hidden="true">
         <label htmlFor="website">Website</label>
@@ -238,6 +289,13 @@ const ContactForm = () => {
         />
         {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message}</p>}
       </div>
+
+      {TURNSTILE_SITE_KEY && (
+        <div>
+          {/* Cloudflare renders the challenge widget into this container. */}
+          <div ref={turnstileRef} className="cf-turnstile" />
+        </div>
+      )}
 
       <div>
         <button

@@ -1,8 +1,11 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { createPublicClient } from '../supabase/public';
 import { hasSupabaseEnv } from '../env';
 import { contactSchema } from '../validations/schemas';
+import { contactRatelimit } from '../rate-limit';
+import { verifyTurnstile } from '../turnstile';
 import type { Database } from '../supabase/database.types';
 
 type ContactInsert = Database['public']['Tables']['contact_messages']['Insert'];
@@ -20,6 +23,15 @@ export interface ContactFormValues {
   subject: string;
   message: string;
   website?: string; // honeypot
+  turnstileToken?: string; // Cloudflare Turnstile
+}
+
+/** Best-effort client IP from proxy headers (Vercel sets x-forwarded-for). */
+function getClientIp(): string {
+  const h = headers();
+  const xff = h.get('x-forwarded-for');
+  if (xff) return xff.split(',')[0]!.trim();
+  return h.get('x-real-ip') ?? '127.0.0.1';
 }
 
 export async function submitContact(values: ContactFormValues): Promise<ContactResult> {
@@ -29,9 +41,35 @@ export async function submitContact(values: ContactFormValues): Promise<ContactR
     return { success: false, message: first };
   }
 
-  // Honeypot: a filled hidden field means a bot — pretend success, store nothing.
+  // ── Layer 1: honeypot ──────────────────────────────────────────────────────
+  // A filled hidden field means a bot — pretend success, store nothing, and skip
+  // the (paid) downstream checks entirely.
   if (parsed.data.website && parsed.data.website.length > 0) {
     return { success: true, message: 'Thank you for your message. We will get back to you shortly.' };
+  }
+
+  const ip = getClientIp();
+
+  // ── Layer 2: rate limit (Upstash) ──────────────────────────────────────────
+  // 5 requests / 10 minutes per IP. Inert when Upstash isn't configured.
+  if (contactRatelimit) {
+    const { success } = await contactRatelimit.limit(ip);
+    if (!success) {
+      return {
+        success: false,
+        message: 'You have sent too many messages. Please wait a few minutes and try again.',
+      };
+    }
+  }
+
+  // ── Layer 3: Turnstile (Cloudflare) ────────────────────────────────────────
+  // Verified server-side. Inert when Turnstile isn't configured.
+  const human = await verifyTurnstile(parsed.data.turnstileToken, ip);
+  if (!human) {
+    return {
+      success: false,
+      message: 'Security verification failed. Please complete the check and try again.',
+    };
   }
 
   if (!hasSupabaseEnv) {

@@ -40,6 +40,9 @@ export const contactSchema = z.object({
   message: z.string().trim().min(10, 'Message must be at least 10 characters.').max(5000),
   // honeypot — must be empty (filled = bot)
   website: z.string().max(0).optional().or(z.literal('')),
+  // Cloudflare Turnstile token; verified server-side before insert. Optional in
+  // the schema so the form still validates when Turnstile is not configured.
+  turnstileToken: z.string().max(2048).optional().or(z.literal('')),
 });
 
 export const messageStatusSchema = z.enum(['new', 'read', 'responded', 'archived']);
