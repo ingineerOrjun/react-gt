@@ -55,6 +55,13 @@ export default withSentryConfig(nextConfig, {
   silent: true,
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
+  // Explicit so upload is gated purely on the token being present in the build env.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
   disableLogger: true,
   widenClientFileUpload: true,
+  sourcemaps: {
+    // Upload hidden source maps for readable stack traces, then delete them from
+    // the output so they are never publicly served.
+    deleteSourcemapsAfterUpload: true,
+  },
 });
