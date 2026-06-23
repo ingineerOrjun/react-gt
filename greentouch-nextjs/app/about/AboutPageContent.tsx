@@ -105,7 +105,7 @@ export default function AboutPageContent() {
             </h2>
             <div className="text-lg md:text-xl leading-relaxed max-w-3xl mx-auto text-gray-700 dark:text-slate-300">
               <p className="mb-6">
-                At GreenTouch Chemicals Pvt. Ltd., we're committed to developing innovative, eco-friendly chemical
+                At GreenTouch Chemicals Pvt. Ltd., we&apos;re committed to developing innovative, eco-friendly chemical
                 solutions that minimize environmental impact while maximizing performance.
                 Founded in 2010, our company has been at the forefront of sustainable
                 chemistry, pioneering green alternatives to traditional chemical products.
@@ -240,9 +240,9 @@ export default function AboutPageContent() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto bg-white dark:bg-slate-900 p-8 md:p-12 rounded-2xl shadow-lg text-center">
             <blockquote className="text-xl md:text-2xl text-gray-600 dark:text-slate-300 italic mb-6">
-              "GreenTouch Chemicals Pvt. Ltd. has completely transformed our manufacturing process.
+              &ldquo;GreenTouch Chemicals Pvt. Ltd. has completely transformed our manufacturing process.
               Their eco-friendly solutions reduced our environmental footprint by 40% while
-              improving our product quality."
+              improving our product quality.&rdquo;
             </blockquote>
             <div className="flex items-center justify-center">
               <div className="w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center text-green-700 dark:text-green-300 font-semibold mr-4">AB</div>
