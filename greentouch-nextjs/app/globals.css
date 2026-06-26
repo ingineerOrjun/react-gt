@@ -43,17 +43,18 @@ body {
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-poppins), var(--font-inter), system-ui, sans-serif;
-    @apply leading-tight tracking-tight;
+    font-family: var(--font-jakarta), var(--font-inter), system-ui, sans-serif;
+    @apply font-bold leading-tight tracking-tight;
   }
 
-  /* Accessible focus ring for every interactive element (keyboard only) */
+  /* Accessible focus ring for every interactive element (keyboard only).
+     Sky accent per the design system — reserved for focus/interactive cues. */
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    @apply outline-none ring-2 ring-green-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 rounded-md;
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-white dark:ring-offset-slate-900 rounded-md;
   }
 
   h1 {
@@ -78,33 +79,88 @@ body {
     @apply px-4 mx-auto max-w-7xl sm:px-6 lg:px-8;
   }
 
+  /* ── Button system ────────────────────────────────────────────────────── */
   .btn {
-    @apply inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold rounded-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent;
   }
 
+  /* Primary — brand emerald-teal (#0F766E → hover #115E59) */
   .btn-primary {
-    @apply text-white bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg hover:-translate-y-0.5 focus:ring-green-500;
+    @apply text-white bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg hover:-translate-y-0.5;
   }
 
+  /* Secondary — navy (#0F172A → hover #1E293B) */
   .btn-secondary {
-    @apply text-green-700 bg-green-100 hover:bg-green-200 focus:ring-green-500;
+    @apply text-white bg-navy hover:bg-navy-light shadow-md hover:shadow-lg hover:-translate-y-0.5;
   }
 
+  /* Outline — fills with the primary colour on hover */
   .btn-outline {
-    @apply text-green-700 bg-transparent border-2 border-green-600 hover:bg-green-50 focus:ring-green-500;
+    @apply text-green-700 dark:text-green-400 bg-transparent border-2 border-green-600 hover:bg-green-600 hover:text-white hover:-translate-y-0.5;
   }
 
   .input {
-    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition;
+    @apply w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition;
   }
 
+  /* Premium card surface */
   .card {
-    @apply bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden;
+    @apply bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700/60 shadow-card overflow-hidden;
   }
 
-  /* Gradient text helper used for brand wordmarks */
+  /* Brand wordmark / heading gradient (emerald-teal) */
   .text-gradient-green {
-    @apply bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-green-700 via-green-600 to-green-400 bg-clip-text text-transparent;
+  }
+
+  /* Signature brand gradient — hero / CTA / premium blocks (teal → navy) */
+  .bg-brand-gradient {
+    @apply bg-gradient-to-br from-[#0F766E] via-[#115E59] to-[#0F172A];
+  }
+
+  /* Premium display serif — hero headlines ONLY (Playfair Display). */
+  .font-display {
+    font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  /* Responsive disclosure — native <details> collapsed on mobile, force-open on
+     desktop (lg+). Zero JS; content stays in the DOM (SEO-safe). The heading
+     lives in <summary> so it shows on both breakpoints; only the chevron + the
+     toggle affordance are removed on desktop (see @media below). */
+  details.responsive-disclosure > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  details.responsive-disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.responsive-disclosure[open] > summary .disclosure-chevron {
+    transform: rotate(180deg);
+  }
+  /* Explicitly drive content visibility from the open state (don't rely on the
+     UA's content-hiding, which varies by engine). */
+  details.responsive-disclosure > .disclosure-content {
+    display: none;
+  }
+  details.responsive-disclosure[open] > .disclosure-content {
+    display: block;
+  }
+
+  /* Standard collapsible disclosure — collapsed on every breakpoint (FAQ). */
+  details.disclosure > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  details.disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.disclosure > .disclosure-content {
+    display: none;
+  }
+  details.disclosure[open] > .disclosure-content {
+    display: block;
   }
 
   /* Left-to-right underline grow on hover for text links */
@@ -119,8 +175,25 @@ body {
   .link-underline:hover::after {
     transform: scaleX(1);
   }
+  /* Active nav link gets the amber premium indicator (vs the brand hover one). */
   .link-underline.is-active::after {
+    @apply bg-premium;
     transform: scaleX(1);
+    height: 2px;
+  }
+}
+
+/* Responsive disclosure — desktop forces content open + removes the toggle. */
+@media (min-width: 1024px) {
+  details.responsive-disclosure > summary {
+    cursor: default;
+    pointer-events: none;
+  }
+  details.responsive-disclosure > summary .disclosure-chevron {
+    display: none;
+  }
+  details.responsive-disclosure > .disclosure-content {
+    display: block !important;
   }
 }
 
@@ -142,6 +215,26 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out both;
+}
+
+/* Contact form: error-field shake + success pop micro-interactions. */
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+.animate-shake {
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.8); }
+  60% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Respect users who prefer reduced motion */

@@ -67,10 +67,10 @@ export default function Navbar() {
                 key={link.label}
                 href={link.path}
                 aria-current={isActive(link.path) ? 'page' : undefined}
-                className={`link-underline font-medium transition-colors duration-200 ${
+                className={`link-underline inline-flex items-center font-medium tracking-tight transition-colors duration-200 ${
                   isActive(link.path)
-                    ? 'is-active text-green-600 dark:text-green-400'
-                    : 'text-slate-700 dark:text-slate-200 hover:text-green-600 dark:hover:text-green-400'
+                    ? 'is-active font-semibold text-slate-900 dark:text-white'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-green-700 dark:hover:text-green-400'
                 }`}
               >
                 {link.label}
@@ -79,7 +79,7 @@ export default function Navbar() {
 
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 hover:ring-2 hover:ring-green-400 transition"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 hover:ring-2 hover:ring-green-400 transition"
               aria-label="Toggle theme"
             >
               {mounted && theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -87,7 +87,7 @@ export default function Navbar() {
 
             <Link
               href="/contact"
-              className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 ease-out"
+              className="inline-flex min-h-[44px] items-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 ease-out"
             >
               Get a Quote
             </Link>
@@ -130,9 +130,9 @@ export default function Navbar() {
                   key={link.label}
                   href={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`font-medium py-2.5 px-3 rounded-lg transition-colors ${
+                  className={`font-medium py-3 px-3 rounded-lg transition-colors flex items-center min-h-[44px] ${
                     isActive(link.path)
-                      ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30'
+                      ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border-l-2 border-premium'
                       : 'text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -142,7 +142,7 @@ export default function Navbar() {
               <Link
                 href="/contact"
                 onClick={() => setIsMenuOpen(false)}
-                className="mt-2 text-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition"
+                className="mt-2 inline-flex min-h-[44px] items-center justify-center px-5 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition"
               >
                 Get a Quote
               </Link>

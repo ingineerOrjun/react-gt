@@ -26,7 +26,7 @@ function SubmitButton({ editing }: { editing: boolean }) {
 }
 
 const fieldClass =
-  'w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
+  'w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition';
 
 export default function ProductForm({ product }: { product?: ProductRow }) {
   const [state, formAction] = useFormState(saveProduct, initialState);
@@ -125,7 +125,7 @@ export default function ProductForm({ product }: { product?: ProductRow }) {
               type="checkbox"
               name="published"
               defaultChecked={product?.published ?? false}
-              className="h-5 w-5 rounded border-slate-300 text-green-600 focus:ring-green-500"
+              className="h-5 w-5 rounded border-slate-300 text-green-600 focus:ring-accent"
             />
             <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Published</span>
           </label>

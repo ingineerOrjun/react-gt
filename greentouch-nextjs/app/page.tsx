@@ -1,15 +1,29 @@
-import React from 'react';
 import { Metadata } from 'next';
-import HeroSection from './components/HeroSection';
-import FeaturesSection from './components/FeaturesSection';
-import ProductsSection from './components/ProductsSection';
-import TestimonialsSection from './components/TestimonialsSection';
-import CtaSection from './components/CtaSection';
 import { getPublishedProducts } from './lib/queries/public';
+import HomeHero from './components/home/HomeHero';
+import HomeTrustBar from './components/home/HomeTrustBar';
+import FeaturedProducts from './components/home/FeaturedProducts';
+import WhyChooseHome from './components/home/WhyChooseHome';
+import AboutPreview from './components/home/AboutPreview';
+import HowItWorks from './components/home/HowItWorks';
+import HomeFaqCondensed from './components/home/HomeFaqCondensed';
+import HomeFinalCta from './components/home/HomeFinalCta';
+import { CONTACT_FAQS } from './components/contact/contactData';
+
+const BASE = 'https://greentouchchemicals.com';
+const description =
+  'GreenTouch Chemicals supplies premium, eco-conscious cleaning and hygiene products for homes, businesses, and industries — with reliable bulk supply for schools, hospitals, hotels, and facilities.';
 
 export const metadata: Metadata = {
-  title: 'GreenTouch Chemicals Pvt. Ltd. - Sustainable Chemical Solutions',
-  description: 'GreenTouch Chemicals Pvt. Ltd. provides eco-friendly and sustainable chemical solutions for businesses and consumers.',
+  title: 'GreenTouch Chemicals | Premium Cleaning & Hygiene Products',
+  description,
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    title: 'GreenTouch Chemicals | Premium Cleaning & Hygiene Products',
+    description,
+    url: BASE,
+  },
 };
 
 export const revalidate = 60;
@@ -17,17 +31,68 @@ export const revalidate = 60;
 export default async function HomePage() {
   const products = await getPublishedProducts(4);
 
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'GreenTouch Chemicals Pvt. Ltd.',
+    url: BASE,
+    publisher: { '@type': 'Organization', name: 'GreenTouch Chemicals Pvt. Ltd.' },
+  };
+
+  // Condensed FAQ structured data (the 3 questions shown on the homepage).
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: CONTACT_FAQS.slice(0, 3).map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer },
+    })),
+  };
+
+  const itemListJsonLd =
+    products.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'Featured Products',
+          itemListElement: products.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: p.name,
+            url: `${BASE}/products/${p.slug}`,
+            ...(p.imageUrl ? { image: p.imageUrl } : {}),
+          })),
+        }
+      : null;
+
   return (
-    <div className="flex flex-col bg-white dark:bg-slate-900">
-      <HeroSection />
-      <div className="py-4 bg-gradient-to-r from-green-50 to-white dark:bg-slate-900"></div>
-      <FeaturesSection />
-      <div className="py-4 bg-white dark:bg-slate-900"></div>
-      <ProductsSection products={products} />
-      <div className="py-4 bg-gradient-to-r from-white to-green-50 dark:bg-slate-900"></div>
-      <TestimonialsSection />
-      <div className="py-4 bg-gradient-to-b from-white to-green-50 dark:bg-slate-900"></div>
-      <CtaSection />
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      {itemListJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+        />
+      )}
+
+      {/* Deduplicated mobile-first flow (Industries → Products, Categories →
+          Products, FAQ → Contact live canonically on those pages). */}
+      {/* 1 */} <HomeHero />
+      {/* 2 */} <HomeTrustBar />
+      {/* 3 */} <FeaturedProducts products={products} />
+      {/* 4 */} <WhyChooseHome />
+      {/* 5 */} <AboutPreview />
+      {/* 6 */} <HowItWorks />
+      {/* 7 */} <HomeFaqCondensed />
+      {/* 8 */} <HomeFinalCta />
+    </>
   );
 }

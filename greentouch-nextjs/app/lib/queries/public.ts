@@ -79,6 +79,67 @@ export async function getPublishedProducts(limit?: number): Promise<ProductView[
   }
 }
 
+export async function getProductBySlug(slug: string): Promise<ProductView | null> {
+  if (!hasSupabaseEnv) return null;
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, slug, name, description, image_path')
+      .eq('slug', slug)
+      .eq('published', true)
+      .maybeSingle();
+    if (error || !data) return null;
+    const p = data as unknown as ProductSelect;
+    return {
+      id: p.id,
+      slug: p.slug,
+      name: p.name,
+      description: p.description,
+      imageUrl: publicImageUrl('products', p.image_path),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function getProductSlugs(): Promise<string[]> {
+  if (!hasSupabaseEnv) return [];
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase.from('products').select('slug').eq('published', true);
+    if (error || !data) return [];
+    return (data as unknown as Pick<ProductRow, 'slug'>[]).map((p) => p.slug);
+  } catch {
+    return [];
+  }
+}
+
+export async function getRelatedProducts(slug: string, limit = 3): Promise<ProductView[]> {
+  if (!hasSupabaseEnv) return [];
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, slug, name, description, image_path')
+      .eq('published', true)
+      .neq('slug', slug)
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error || !data) return [];
+    return (data as unknown as ProductSelect[]).map((p) => ({
+      id: p.id,
+      slug: p.slug,
+      name: p.name,
+      description: p.description,
+      imageUrl: publicImageUrl('products', p.image_path),
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getPublishedBlogs(): Promise<BlogCardView[]> {
   if (!hasSupabaseEnv) return [];
   try {

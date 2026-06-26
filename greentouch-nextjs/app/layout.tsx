@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { Inter, Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Providers } from './providers';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Footer from './components/layout/Footer';
+import MobileStickyBar from './components/layout/MobileStickyBar';
 import SiteMain from './components/SiteMain';
 import './globals.css';
 
@@ -15,10 +16,19 @@ const inter = Inter({
   display: 'swap',
 });
 
-const poppins = Poppins({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-  variable: '--font-poppins',
+  weight: ['600', '700', '800'],
+  variable: '--font-jakarta',
+  display: 'swap',
+});
+
+// Premium display serif — used ONLY on hero headlines via the `.font-display`
+// utility. Two weights, latin subset, swap → minimal payload, no client JS.
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-playfair',
   display: 'swap',
 });
 
@@ -31,12 +41,13 @@ const organizationJsonLd = {
   url: siteUrl,
   logo: `${siteUrl}/icon.svg`,
   description: 'Eco-friendly chemical products and sustainable solutions.',
-  email: 'greentouchgrouppvtltd.1@gmail.com',
+  email: 'greentouch.np@gmail.com',
   telephone: '+977-9801603296',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Kushwaha Chock Dhalkebar',
-    addressRegion: 'Dhanusa',
+    streetAddress: 'Dhalkebar, Mithila Municipality',
+    addressRegion: 'Dhanusha',
+    postalCode: '45700',
     addressCountry: 'NP',
   },
   sameAs: [
@@ -87,7 +98,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${poppins.variable} scroll-smooth`}
+      className={`${inter.variable} ${jakarta.variable} ${playfair.variable} scroll-smooth`}
     >
       <body className="font-sans antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 selection:bg-green-200 selection:text-green-900">
         <script
@@ -102,8 +113,12 @@ export default function RootLayout({
             Skip to content
           </a>
           <Navbar />
-          <SiteMain>{children}</SiteMain>
-          <Footer />
+          {/* Footer is a Server Component rendered here and gated inside SiteMain
+              (which already knows the route) so it never shows on /admin — without
+              forcing dynamic rendering in this layout. */}
+          <SiteMain footer={<Footer />} stickyBar={<MobileStickyBar />}>
+            {children}
+          </SiteMain>
         </Providers>
         {gaId && <GoogleAnalytics gaId={gaId} />}
       </body>

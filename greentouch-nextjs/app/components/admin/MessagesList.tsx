@@ -79,7 +79,7 @@ function MessageRow({ message, onRemoved }: { message: ContactMessageRow; onRemo
           onChange={(e) => changeStatus(e.target.value)}
           disabled={pending}
           aria-label="Change status"
-          className="shrink-0 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-2 py-1.5 capitalize focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="shrink-0 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-2 py-1.5 capitalize focus:outline-none focus:ring-2 focus:ring-accent"
         >
           {STATUSES.map((s) => (
             <option key={s} value={s} className="capitalize">

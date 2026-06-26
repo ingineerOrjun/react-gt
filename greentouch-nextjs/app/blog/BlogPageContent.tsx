@@ -69,7 +69,7 @@ export default function BlogPageContent({ posts }: { posts: BlogCardView[] }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Search articles"
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-slate-800 dark:text-slate-100 transition"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-white dark:bg-slate-800 dark:text-slate-100 transition"
                 />
                 <Search className="absolute left-3 top-3.5 h-5 w-5 text-slate-400 dark:text-slate-500" />
               </div>

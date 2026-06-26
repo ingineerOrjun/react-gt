@@ -37,13 +37,27 @@ export const SOCIAL_LINKS = [
   { platform: 'Instagram', icon: 'instagram', url: 'https://instagram.com' },
 ];
 
-// Contact information
+// Contact information (real company data). `phone` stays digits-only for
+// tel:/wa.me links; `phoneDisplay` is the formatted form for UI.
 export const CONTACT_INFO = {
-  address: 'Kushwaha Chock Dhalkebar, Dhanusa district',
+  address: 'Dhalkebar, Mithila Municipality, Dhanusha, Nepal 45700',
   phone: '9801603296',
-  email: 'greentouchgrouppvtltd.1@gmail.com',
+  phoneDisplay: '980-1603296',
+  email: 'greentouch.np@gmail.com',
   hours: 'Monday - Friday: 9am - 5pm',
 };
+
+// Cities served (real service areas) — used for honest trust messaging.
+export const SERVICE_AREAS = [
+  'Lahan',
+  'Rajbiraj',
+  'Jaleshwar',
+  'Birgunj',
+  'Siraha',
+  'Janakpur',
+  'Malangwa',
+  'Kalaiya',
+];
 
 // Product categories
 export const PRODUCT_CATEGORIES = [
