@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { jsonLdScript } from '../lib/utils';
 import AboutHero from '../components/about/AboutHero';
 import CompanyStory from '../components/about/CompanyStory';
 import MissionVision from '../components/about/MissionVision';
@@ -50,7 +51,7 @@ export default function AboutPage() {
     <main className="bg-white dark:bg-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(aboutJsonLd) }}
       />
 
       {/* Deduplicated: Why-Choose lives on Home; Industries & Categories on

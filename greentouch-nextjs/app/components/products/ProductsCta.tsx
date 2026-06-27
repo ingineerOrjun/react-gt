@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { ArrowRight, Phone } from 'lucide-react';
-import { CONTACT_INFO } from '../../lib/constants';
+import { getSiteSettings } from '../../lib/queries/site-settings';
 
 // Closing conversion band. Mirrors the site's gradient CTA language.
-export default function ProductsCta() {
+export default async function ProductsCta() {
+  const s = await getSiteSettings();
   return (
     <section className="bg-brand-gradient py-16 text-white md:py-20">
       <div className="container text-center">
@@ -23,11 +24,11 @@ export default function ProductsCta() {
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </Link>
           <a
-            href={`tel:${CONTACT_INFO.phone}`}
+            href={`tel:${s.phone}`}
             className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-8 py-3.5 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10"
           >
             <Phone className="h-4 w-4" />
-            {CONTACT_INFO.phone}
+            {s.phone}
           </a>
         </div>
       </div>

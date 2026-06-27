@@ -8,13 +8,6 @@ export interface IconItem {
   description: string;
 }
 
-// Hero inline trust indicators (honest, no statistics).
-export const HERO_POINTS: string[] = [
-  'Eco-friendly formulations',
-  'Reliable bulk supply',
-  'Trusted by institutions',
-];
-
 // How It Works — four-step B2B supply process.
 export const HOW_IT_WORKS: IconItem[] = [
   {

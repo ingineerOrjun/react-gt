@@ -47,6 +47,36 @@ export const contactSchema = z.object({
 
 export const messageStatusSchema = z.enum(['new', 'read', 'responded', 'archived']);
 
+const urlOrEmpty = z.string().trim().url('Enter a valid URL.').max(300).optional().or(z.literal(''));
+
+// Global Settings CMS (Phase 3) — scalar fields. Arrays (service areas, business
+// hours) are parsed & validated in the action; social URLs validated here.
+export const settingsSchema = z.object({
+  company_name: z.string().trim().min(1, 'Company name is required.').max(160),
+  company_tagline: z.string().trim().max(200).optional().or(z.literal('')),
+  company_description: z.string().trim().max(1200).optional().or(z.literal('')),
+  contact_email: z.string().trim().email('Enter a valid email address.').max(160),
+  contact_phone: z.string().trim().regex(/^[0-9+\-\s]{7,20}$/, 'Enter a valid phone number.'),
+  whatsapp: z.string().trim().regex(/^[0-9+\-\s]{0,20}$/, 'Enter a valid WhatsApp number.').optional().or(z.literal('')),
+  address: z.string().trim().min(1, 'Address is required.').max(300),
+  address_street: z.string().trim().max(160).optional().or(z.literal('')),
+  address_municipality: z.string().trim().max(160).optional().or(z.literal('')),
+  address_district: z.string().trim().max(160).optional().or(z.literal('')),
+  address_postal_code: z.string().trim().max(20).optional().or(z.literal('')),
+  address_country: z.string().trim().max(80).optional().or(z.literal('')),
+  seo_title: z.string().trim().max(200).optional().or(z.literal('')),
+  seo_description: z.string().trim().max(320).optional().or(z.literal('')),
+  seo_keywords: z.string().trim().max(500).optional().or(z.literal('')),
+  seo_og_image: urlOrEmpty,
+  footer_copyright: z.string().trim().max(300).optional().or(z.literal('')),
+  social_facebook: urlOrEmpty,
+  social_twitter: urlOrEmpty,
+  social_instagram: urlOrEmpty,
+  social_linkedin: urlOrEmpty,
+  social_youtube: urlOrEmpty,
+  social_tiktok: urlOrEmpty,
+});
+
 export const siteSettingsSchema = z.object({
   site_title: z.string().trim().min(1).max(200),
   contact_email: z.string().trim().email().max(160),

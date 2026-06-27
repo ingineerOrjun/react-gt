@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import WhatsappIcon from '../products/detail/WhatsappIcon';
-import { CONTACT_INFO } from '../../lib/constants';
-
-const whatsappHref = `https://wa.me/977${CONTACT_INFO.phone}?text=${encodeURIComponent(
-  'Hello GreenTouch, I would like to request a quote for your cleaning and hygiene products.'
-)}`;
+import { getSiteSettings } from '../../lib/queries/site-settings';
 
 // Large CTA band shown above the footer body. Server Component; pure-CSS hover.
-export default function FooterCTA() {
+export default async function FooterCTA() {
+  const s = await getSiteSettings();
+  const whatsappHref = `https://wa.me/977${s.whatsapp}?text=${encodeURIComponent(
+    'Hello GreenTouch, I would like to request a quote for your cleaning and hygiene products.',
+  )}`;
   return (
     <section className="relative overflow-hidden bg-brand-gradient text-white">
       <div

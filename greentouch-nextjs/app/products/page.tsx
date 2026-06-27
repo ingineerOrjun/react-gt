@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getPublishedProducts } from '../lib/queries/public';
+import { jsonLdScript } from '../lib/utils';
 import ProductsHero from '../components/products/ProductsHero';
 import ProductsGrid from '../components/products/ProductsGrid';
 import ProductCategories from '../components/products/ProductCategories';
@@ -43,7 +44,7 @@ export default async function ProductsPage() {
       {itemListJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(itemListJsonLd) }}
         />
       )}
 

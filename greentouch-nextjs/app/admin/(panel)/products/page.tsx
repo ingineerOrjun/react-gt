@@ -1,40 +1,51 @@
-import React from 'react';
-import Link from 'next/link';
-import { Plus, Package } from 'lucide-react';
-import ProductsTable from '../../../components/admin/ProductsTable';
-import { getAdminProducts } from '../../../lib/queries/admin';
+import { getAdminProducts, getCategoryOptions } from '../../../lib/queries/admin';
+import { AdminPageHeader } from '../../../components/admin/ui/PageHeader';
+import DataTable, { type DataRow } from '../../../components/admin/ui/DataTable';
+import { productColumns, productFilters } from '../../../components/admin/ui/specs';
+import type { FilterSpec } from '../../../components/admin/ui/types';
+import {
+  toggleProductPublished,
+  deleteProduct,
+  duplicateProduct,
+  bulkPublishProducts,
+  bulkDeleteProducts,
+} from '../../../lib/actions/products';
 
 export const metadata = { title: 'Products' };
 
 export default async function AdminProductsPage() {
-  const products = await getAdminProducts();
+  const [products, categories] = await Promise.all([getAdminProducts(), getCategoryOptions()]);
+
+  // Status + Featured (+ Category when categories exist) — built dynamically.
+  const filters: FilterSpec[] = [
+    ...productFilters,
+    { key: 'featured', label: 'Featured', options: [{ label: 'Featured', value: 'true' }, { label: 'Not featured', value: 'false' }] },
+    ...(categories.length ? [{ key: 'category_id', label: 'Category', options: categories }] : []),
+  ];
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Products</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">{products.length} total</p>
-        </div>
-        <Link
-          href="/admin/products/new"
-          className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors"
-        >
-          <Plus className="h-4 w-4" /> New product
-        </Link>
-      </div>
-
-      {products.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-          <Package className="h-10 w-10 mx-auto mb-3 text-slate-300 dark:text-slate-600" />
-          <p className="text-slate-600 dark:text-slate-300 mb-4">No products yet.</p>
-          <Link href="/admin/products/new" className="text-green-600 dark:text-green-400 font-medium hover:underline">
-            Create your first product
-          </Link>
-        </div>
-      ) : (
-        <ProductsTable products={products} />
-      )}
+      <AdminPageHeader
+        title="Products"
+        description={`${products.length} total`}
+        newHref="/admin/products/new"
+        newLabel="New product"
+      />
+      <DataTable
+        rows={products as unknown as DataRow[]}
+        columns={productColumns}
+        filters={filters}
+        basePath="/admin/products"
+        searchKeys={['name', 'slug']}
+        labelSingular="product"
+        labelPlural="products"
+        emptyIconName="package"
+        onTogglePublished={toggleProductPublished}
+        onDelete={deleteProduct}
+        onDuplicate={duplicateProduct}
+        onBulkPublish={bulkPublishProducts}
+        onBulkDelete={bulkDeleteProducts}
+      />
     </div>
   );
 }

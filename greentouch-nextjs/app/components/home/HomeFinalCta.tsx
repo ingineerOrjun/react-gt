@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import WhatsappIcon from '../products/detail/WhatsappIcon';
-import { CONTACT_INFO } from '../../lib/constants';
+import { getSiteSettings } from '../../lib/queries/site-settings';
+import { getHomeContent } from '../../lib/queries/home';
 
-const whatsappHref = `https://wa.me/977${CONTACT_INFO.phone}?text=${encodeURIComponent(
-  'Hello GreenTouch, I would like to request a quote for your cleaning and hygiene products.'
-)}`;
-
-// Section 10 — final conversion CTA.
-export default function HomeFinalCta() {
+// Section 10 — final conversion CTA. Copy is database-driven (home_sections['cta']);
+// the WhatsApp link comes from the global settings single source of truth.
+export default async function HomeFinalCta() {
+  const [s, home] = await Promise.all([getSiteSettings(), getHomeContent()]);
+  const cta = home.cta;
+  const whatsappHref = `https://wa.me/977${s.whatsapp}?text=${encodeURIComponent(
+    'Hello GreenTouch, I would like to request a quote for your cleaning and hygiene products.',
+  )}`;
   return (
     <section className="relative overflow-hidden bg-brand-gradient py-10 text-white md:py-24">
       <div
@@ -17,18 +20,17 @@ export default function HomeFinalCta() {
       />
       <div className="container relative text-center">
         <h2 className="mx-auto max-w-3xl text-3xl font-bold md:text-4xl">
-          Ready to Order Reliable Cleaning &amp; Hygiene Supply?
+          {cta.title}
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-green-50/90">
-          Request a quote or message us on WhatsApp — bulk and custom quantities welcome. We
-          typically respond within 24 hours.
+          {cta.content}
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
-            href="/contact"
+            href={cta.buttonLink}
             className="group inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3.5 font-semibold text-green-700 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-50"
           >
-            Request a Quote
+            {cta.buttonText}
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </Link>
           <a

@@ -9,22 +9,26 @@ import {
   Twitter,
   Instagram,
   Linkedin,
+  Youtube,
   MapPin,
+  type LucideIcon,
 } from 'lucide-react';
 import { getPublishedProducts } from '../../lib/queries/public';
+import { getSiteSettings } from '../../lib/queries/site-settings';
 import { INDUSTRIES } from '../about/aboutData';
-import { SERVICE_AREAS } from '../../lib/constants';
 import FooterCTA from './FooterCTA';
 import FooterLinks from './FooterLinks';
 import FooterProducts from './FooterProducts';
 import FooterContact from './FooterContact';
 import FooterBottom from './FooterBottom';
 
-const SOCIALS = [
-  { label: 'Facebook', icon: Facebook, url: 'https://facebook.com/greentouchchemicalsindustries' },
-  { label: 'Twitter', icon: Twitter, url: 'https://twitter.com/greentouchchem' },
-  { label: 'Instagram', icon: Instagram, url: 'https://instagram.com/greentouchchemicalsindustries' },
-  { label: 'LinkedIn', icon: Linkedin, url: 'https://linkedin.com/company/greentouch-chemical-industries' },
+// Platform → icon + display label. URLs come from the database (settings.social).
+const SOCIAL_META: { key: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube'; label: string; icon: LucideIcon }[] = [
+  { key: 'facebook', label: 'Facebook', icon: Facebook },
+  { key: 'twitter', label: 'Twitter', icon: Twitter },
+  { key: 'instagram', label: 'Instagram', icon: Instagram },
+  { key: 'linkedin', label: 'LinkedIn', icon: Linkedin },
+  { key: 'youtube', label: 'YouTube', icon: Youtube },
 ];
 
 const QUICK_LINKS = [
@@ -45,9 +49,12 @@ const TRUST = [
 // Premium site footer. Async Server Component — pulls popular products from
 // Supabase (resilient: empty list when unconfigured). No client JavaScript.
 export default async function Footer() {
-  const products = await getPublishedProducts(5);
+  const [products, settings] = await Promise.all([getPublishedProducts(5), getSiteSettings()]);
   const year = new Date().getFullYear();
   const industryItems = INDUSTRIES.map((i) => ({ label: i.title }));
+  const socials = SOCIAL_META.map((m) => ({ ...m, url: settings.social[m.key] })).filter(
+    (s): s is typeof s & { url: string } => Boolean(s.url),
+  );
 
   return (
     <footer aria-labelledby="footer-heading" className="relative">
@@ -106,7 +113,7 @@ export default async function Footer() {
                 homes, businesses, and institutions.
               </p>
               <div className="mt-6 flex gap-2.5">
-                {SOCIALS.map(({ label, icon: Icon, url }) => (
+                {socials.map(({ label, icon: Icon, url }) => (
                   <a
                     key={label}
                     href={url}
@@ -131,7 +138,12 @@ export default async function Footer() {
               <FooterProducts products={products} />
             </div>
             <div className="lg:col-span-2">
-              <FooterContact />
+              <FooterContact
+                phone={settings.phone}
+                email={settings.email}
+                whatsapp={settings.whatsapp}
+                address={settings.address}
+              />
             </div>
           </div>
 
@@ -140,12 +152,12 @@ export default async function Footer() {
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-400">
               <MapPin className="h-4 w-4 shrink-0 text-green-400" />
               <span className="font-semibold text-slate-300">Areas we serve:</span>
-              {SERVICE_AREAS.join(' · ')}
+              {settings.serviceAreas.join(' · ')}
             </p>
           </div>
         </div>
 
-        <FooterBottom year={year} />
+        <FooterBottom year={year} copyright={settings.footerCopyright} />
       </div>
     </footer>
   );

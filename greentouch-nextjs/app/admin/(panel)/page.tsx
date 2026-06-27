@@ -1,112 +1,130 @@
-import React from 'react';
-import Link from 'next/link';
-import { Package, FileText, Mail, Inbox } from 'lucide-react';
-import { createClient } from '../../lib/supabase/server';
-import type { ContactMessageRow } from '../../lib/supabase/database.types';
+import { Suspense } from 'react';
+import { Sparkles } from 'lucide-react';
+import { getDashboardData } from '../../lib/queries/dashboard';
+import KpiRow from '../../components/admin/dashboard/KpiRow';
+import QuickActions from '../../components/admin/dashboard/QuickActions';
+import ActivityTimeline from '../../components/admin/dashboard/ActivityTimeline';
+import MessagesOverview from '../../components/admin/dashboard/MessagesOverview';
+import { ProductHealth, BlogHealth, WebsiteHealth } from '../../components/admin/dashboard/HealthPanels';
+import { CompanyInfo, ContentSummary } from '../../components/admin/dashboard/CompanyAndSummary';
+import { SectionTitle } from '../../components/admin/dashboard/primitives';
+import DataTable, { type DataRow } from '../../components/admin/ui/DataTable';
+import { recentProductColumns, recentBlogColumns } from '../../components/admin/ui/specs';
+import { toggleProductPublished } from '../../lib/actions/products';
+import { toggleBlogPublished } from '../../lib/actions/blogs';
 
-async function getDashboardData() {
-  const supabase = createClient();
+export const metadata = { title: 'Dashboard' };
 
-  const safeCount = async (table: 'products' | 'blogs' | 'contact_messages') => {
-    try {
-      const { count } = await supabase.from(table).select('*', { count: 'exact', head: true });
-      return count ?? 0;
-    } catch {
-      return 0;
-    }
-  };
-
-  let recentMessages: Pick<ContactMessageRow, 'id' | 'name' | 'subject' | 'status' | 'created_at'>[] = [];
-  try {
-    const { data } = await supabase
-      .from('contact_messages')
-      .select('id, name, subject, status, created_at')
-      .order('created_at', { ascending: false })
-      .limit(5);
-    recentMessages = data ?? [];
-  } catch {
-    recentMessages = [];
-  }
-
-  const [products, blogs, messages] = await Promise.all([
-    safeCount('products'),
-    safeCount('blogs'),
-    safeCount('contact_messages'),
-  ]);
-
-  return { products, blogs, messages, recentMessages };
+export default function DashboardPage() {
+  return (
+    <div className="space-y-7">
+      <DashboardHeader />
+      <Suspense fallback={<DashboardSkeleton />}>
+        {/* Streams once the parallel metric gather resolves. */}
+        <DashboardContent />
+      </Suspense>
+    </div>
+  );
 }
 
-const STATUS_STYLES: Record<string, string> = {
-  new: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
-  read: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-  responded: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-  archived: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300',
-};
+function DashboardHeader() {
+  const date = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  return (
+    <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-card dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/60 md:p-7">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">
+        <Sparkles className="h-3.5 w-3.5" /> Control center
+      </span>
+      <h1 className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100 md:text-3xl">Welcome back</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{date} · Greentouch Chemical Industries</p>
+    </header>
+  );
+}
 
-export default async function DashboardPage() {
-  const { products, blogs, messages, recentMessages } = await getDashboardData();
-
-  const stats = [
-    { label: 'Total Products', value: products, icon: Package, href: '/admin/products' },
-    { label: 'Total Blogs', value: blogs, icon: FileText, href: '/admin/blogs' },
-    { label: 'Total Messages', value: messages, icon: Mail, href: '/admin/messages' },
-  ];
+async function DashboardContent() {
+  const data = await getDashboardData();
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">Dashboard</h1>
+    <div className="space-y-7">
+      {/* 1 — KPIs */}
+      <KpiRow data={data} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-        {stats.map(({ label, value, icon: Icon, href }) => (
-          <Link
-            key={label}
-            href={href}
-            className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 hover:shadow-md hover:border-green-300 dark:hover:border-green-700/60 transition-all"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="inline-flex p-2.5 rounded-xl bg-green-100 dark:bg-green-900/40">
-                <Icon className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </span>
-            </div>
-            <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{label}</p>
-          </Link>
-        ))}
+      {/* 2 — Quick actions */}
+      <QuickActions />
+
+      {/* 3 — Activity + Messages */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ActivityTimeline items={data.activity} />
+        <MessagesOverview messages={data.messages} />
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Recent Messages</h2>
-          <Link href="/admin/messages" className="text-sm text-green-600 dark:text-green-400 hover:underline">
-            View all
-          </Link>
-        </div>
+      {/* 5/6/7 — Content health + website health */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <ProductHealth issues={data.products.issues} />
+        <BlogHealth issues={data.blogs.issues} />
+        <WebsiteHealth signals={data.health} />
+      </div>
 
-        {recentMessages.length === 0 ? (
-          <div className="text-center py-10 text-slate-500 dark:text-slate-400">
-            <Inbox className="h-10 w-10 mx-auto mb-3 opacity-50" />
-            <p>No messages yet.</p>
-          </div>
-        ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-            {recentMessages.map((m) => (
-              <li key={m.id} className="py-3 flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="font-medium text-slate-900 dark:text-slate-100 truncate">{m.subject}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{m.name}</p>
-                </div>
-                <span
-                  className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                    STATUS_STYLES[m.status] ?? STATUS_STYLES.new
-                  }`}
-                >
-                  {m.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+      {/* 10 — Recent products */}
+      <section aria-labelledby="recent-products">
+        <SectionTitle title="Recent products" action={{ label: 'View all', href: '/admin/products' }} />
+        <DataTable
+          compact
+          rows={data.products.recent as unknown as DataRow[]}
+          columns={recentProductColumns}
+          basePath="/admin/products"
+          searchKeys={[]}
+          labelSingular="product"
+          labelPlural="products"
+          emptyIconName="package"
+          onTogglePublished={toggleProductPublished}
+        />
+      </section>
+
+      {/* 11 — Recent blogs */}
+      <section aria-labelledby="recent-blogs">
+        <SectionTitle title="Recent blogs" action={{ label: 'View all', href: '/admin/blogs' }} />
+        <DataTable
+          compact
+          rows={data.blogs.recent as unknown as DataRow[]}
+          columns={recentBlogColumns}
+          basePath="/admin/blogs"
+          searchKeys={[]}
+          labelSingular="article"
+          labelPlural="articles"
+          emptyIconName="file"
+          onTogglePublished={toggleBlogPublished}
+        />
+      </section>
+
+      {/* 8/9 — System / company information */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <CompanyInfo company={data.company} />
+        <ContentSummary data={data} />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCard({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse rounded-3xl border border-slate-200 bg-slate-100/70 dark:border-slate-800 dark:bg-slate-800/40 ${className}`} />;
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-7" aria-hidden="true">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <SkeletonCard key={i} className="h-28" />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <SkeletonCard key={i} className="h-24" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <SkeletonCard className="h-64" />
+        <SkeletonCard className="h-64" />
       </div>
     </div>
   );

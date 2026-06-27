@@ -1,11 +1,11 @@
 import type { MetadataRoute } from 'next';
 import { getPublishedBlogSlugs } from './lib/queries/public';
-
-const base = 'https://greentouchchemicals.com';
+import { getSiteSettings } from './lib/queries/site-settings';
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = (await getSiteSettings()).siteUrl;
   const staticPaths: { path: string; priority: number; freq: 'daily' | 'weekly' | 'monthly' }[] = [
     { path: '', priority: 1, freq: 'weekly' },
     { path: '/about', priority: 0.8, freq: 'monthly' },

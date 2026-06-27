@@ -22,7 +22,7 @@ import {
   HeartHandshake,
   type LucideIcon,
 } from 'lucide-react';
-import { CONTACT_INFO } from '../../lib/constants';
+import type { SiteSettings } from '../../lib/site-settings-defaults';
 
 export interface IconItem {
   icon: LucideIcon;
@@ -38,45 +38,43 @@ export const TRUST_BADGES: { icon: LucideIcon; label: string }[] = [
   { icon: Headphones, label: 'Customer Support' },
 ];
 
-// Hero quick-action chips.
-export const CONTACT_CHIPS: { icon: LucideIcon; label: string; value: string; href?: string }[] = [
-  { icon: Phone, label: 'Call', value: CONTACT_INFO.phone, href: `tel:${CONTACT_INFO.phone}` },
-  { icon: Mail, label: 'Email', value: CONTACT_INFO.email, href: `mailto:${CONTACT_INFO.email}` },
-  { icon: MapPin, label: 'Visit', value: 'Dhalkebar, Dhanusa' },
-];
-
-// Section 2 — contact options grid.
-export const CONTACT_OPTIONS: {
+// Section 2 — contact options grid. Built from the database single source of
+// truth (settings) so phone/email/address stay in sync everywhere.
+export interface ContactOption {
   icon: LucideIcon;
   title: string;
   value: string;
   description: string;
   href?: string;
   external?: boolean;
-}[] = [
-  {
-    icon: Phone,
-    title: 'Call Us',
-    value: CONTACT_INFO.phone,
-    description: 'Speak directly with our supply team for quick answers and availability.',
-    href: `tel:${CONTACT_INFO.phone}`,
-  },
-  {
-    icon: Mail,
-    title: 'Email Us',
-    value: CONTACT_INFO.email,
-    description: 'Send your requirements and we will respond with a tailored quotation.',
-    href: `mailto:${CONTACT_INFO.email}`,
-  },
-  {
-    icon: MapPin,
-    title: 'Visit Us',
-    value: CONTACT_INFO.address,
-    description: 'Meet our team at our facility in Dhalkebar, Dhanusa.',
-    href: 'https://www.google.com/maps/search/?api=1&query=Kushwaha+Chock+Dhalkebar+Dhanusa+Nepal',
-    external: true,
-  },
-];
+}
+
+export function buildContactOptions(s: SiteSettings): ContactOption[] {
+  return [
+    {
+      icon: Phone,
+      title: 'Call Us',
+      value: s.phone,
+      description: 'Speak directly with our supply team for quick answers and availability.',
+      href: `tel:${s.phone}`,
+    },
+    {
+      icon: Mail,
+      title: 'Email Us',
+      value: s.email,
+      description: 'Send your requirements and we will respond with a tailored quotation.',
+      href: `mailto:${s.email}`,
+    },
+    {
+      icon: MapPin,
+      title: 'Visit Us',
+      value: s.address,
+      description: `Meet our team at our facility in ${s.addressStreet}, ${s.addressDistrict}.`,
+      href: 'https://www.google.com/maps/search/?api=1&query=Dhalkebar+Mithila+Municipality+Dhanusha+Nepal',
+      external: true,
+    },
+  ];
+}
 
 // Section 4 — why businesses choose GreenTouch.
 export const WHY_CHOOSE: IconItem[] = [

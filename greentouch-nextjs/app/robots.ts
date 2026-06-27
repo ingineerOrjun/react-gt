@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
+import { getSiteSettings } from './lib/queries/site-settings';
 
-const base = 'https://greentouchchemicals.com';
-
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const base = (await getSiteSettings()).siteUrl;
   return {
     rules: [
       {

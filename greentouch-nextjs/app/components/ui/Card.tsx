@@ -4,8 +4,8 @@ import { cn } from '../../lib/utils';
 // ── Unified card foundation ──────────────────────────────────────────────────
 // Single source of truth for card surfaces across the site. 24px radius
 // (rounded-3xl), premium border, enterprise shadow, subtle elevated hover.
-// Server Component; hover is pure CSS. Reused by IconCard / FeatureCard /
-// StatCard and any section needing a surface.
+// Server Component; hover is pure CSS. Reused by IconCard / FeatureCard and any
+// section needing a surface.
 export const cardBase =
   'rounded-3xl border border-slate-200/80 bg-white shadow-card transition-all duration-300 ease-out dark:border-slate-700/60 dark:bg-slate-800/60';
 

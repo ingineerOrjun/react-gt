@@ -139,12 +139,11 @@ body {
   details.responsive-disclosure[open] > summary .disclosure-chevron {
     transform: rotate(180deg);
   }
-  /* Explicitly drive content visibility from the open state (don't rely on the
-     UA's content-hiding, which varies by engine). */
+  /* Content is OPEN BY DEFAULT (desktop). Mobile collapses it via the @media
+     rules below. Desktop visibility is the default — it never depends on an
+     override winning, so these columns can't disappear regardless of
+     cascade-layer ordering across browsers/builds. */
   details.responsive-disclosure > .disclosure-content {
-    display: none;
-  }
-  details.responsive-disclosure[open] > .disclosure-content {
     display: block;
   }
 
@@ -183,7 +182,18 @@ body {
   }
 }
 
-/* Responsive disclosure — desktop forces content open + removes the toggle. */
+/* Mobile: collapse the disclosure content unless the <details> is open. */
+@media (max-width: 1023.98px) {
+  details.responsive-disclosure:not([open]) > .disclosure-content {
+    display: none;
+  }
+}
+/* Desktop: always open — remove the toggle affordance and force the content
+   visible regardless of how the browser hides a CLOSED <details>:
+   • older engines hide the child element  → display:block reveals it;
+   • Chrome 131+ slots the content into ::details-content with
+     content-visibility:hidden → a child display can't reveal it, so we override
+     content-visibility on both the content and the ::details-content pseudo. */
 @media (min-width: 1024px) {
   details.responsive-disclosure > summary {
     cursor: default;
@@ -194,6 +204,11 @@ body {
   }
   details.responsive-disclosure > .disclosure-content {
     display: block !important;
+    content-visibility: visible !important;
+  }
+  details.responsive-disclosure::details-content {
+    content-visibility: visible;
+    display: block;
   }
 }
 

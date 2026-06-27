@@ -1,21 +1,26 @@
-import React from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import ProductForm from '../../../../components/admin/ProductForm';
+import { BackLink } from '../../../../components/admin/ui/PageHeader';
+import ResourceForm from '../../../../components/admin/ui/ResourceForm';
+import { productFields } from '../../../../components/admin/ui/specs';
+import { saveProduct } from '../../../../lib/actions/products';
+import { getCategoryOptions } from '../../../../lib/queries/admin';
 
 export const metadata = { title: 'New product' };
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
+  const categories = await getCategoryOptions();
   return (
     <div>
-      <Link
-        href="/admin/products"
-        className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-400 mb-4"
-      >
-        <ArrowLeft className="h-4 w-4 mr-1.5" /> Back to products
-      </Link>
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">New product</h1>
-      <ProductForm />
+      <BackLink href="/admin/products" label="Back to products" />
+      <h1 className="mb-6 text-2xl font-bold text-slate-900 dark:text-slate-100">New product</h1>
+      <ResourceForm
+        fields={productFields}
+        action={saveProduct}
+        basePath="/admin/products"
+        labelSingular="product"
+        createLabel="Create product"
+        draftKey="gt-draft-product-new"
+        fieldOptions={{ category_id: categories }}
+      />
     </div>
   );
 }

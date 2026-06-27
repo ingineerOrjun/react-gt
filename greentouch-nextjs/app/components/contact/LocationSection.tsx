@@ -2,23 +2,24 @@ import { MapPin, Clock, Globe2, ExternalLink } from 'lucide-react';
 import Reveal from '../ui/Reveal';
 import { cn } from '../../lib/utils';
 import { cardBase, cardHover, cardIconTile } from '../ui/Card';
-import { CONTACT_INFO, SERVICE_AREAS } from '../../lib/constants';
+import { getSiteSettings } from '../../lib/queries/site-settings';
 
 const MAPS_URL =
   'https://www.google.com/maps/search/?api=1&query=Dhalkebar+Mithila+Municipality+Dhanusha+Nepal';
 
-const CARDS = [
-  { icon: MapPin, title: 'Business Address', value: CONTACT_INFO.address },
-  { icon: Clock, title: 'Business Hours', value: `${CONTACT_INFO.hours}\nWeekends: By appointment` },
-  {
-    icon: Globe2,
-    title: 'Coverage Area',
-    value: `Delivering to ${SERVICE_AREAS.length} cities — ${SERVICE_AREAS.slice(0, -1).join(', ')} & ${SERVICE_AREAS.at(-1)} — plus surrounding regions across Nepal.`,
-  },
-];
-
 // Section 7 — dedicated location section with elegant information cards.
-export default function LocationSection() {
+export default async function LocationSection() {
+  const s = await getSiteSettings();
+  const SERVICE_AREAS = s.serviceAreas;
+  const CARDS = [
+    { icon: MapPin, title: 'Business Address', value: s.address },
+    { icon: Clock, title: 'Business Hours', value: s.businessHours.map((h) => `${h.label}: ${h.value}`).join('\n') },
+    {
+      icon: Globe2,
+      title: 'Coverage Area',
+      value: `Delivering to ${SERVICE_AREAS.length} cities — ${SERVICE_AREAS.slice(0, -1).join(', ')} & ${SERVICE_AREAS.at(-1)} — plus surrounding regions across Nepal.`,
+    },
+  ];
   return (
     <section className="relative overflow-hidden bg-slate-50 py-16 dark:bg-slate-900/40 md:py-20">
       <div className="container">

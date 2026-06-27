@@ -13,8 +13,8 @@ import {
   Headphones,
 } from 'lucide-react';
 import { getProductBySlug, getProductSlugs, getRelatedProducts } from '../../lib/queries/public';
-import { truncateText } from '../../lib/utils';
-import { CONTACT_INFO } from '../../lib/constants';
+import { truncateText, jsonLdScript } from '../../lib/utils';
+import { getSiteSettings } from '../../lib/queries/site-settings';
 import Reveal from '../../components/ui/Reveal';
 import IconCard from '../../components/ui/IconCard';
 import FeatureCard from '../../components/ui/FeatureCard';
@@ -51,23 +51,30 @@ export async function generateMetadata({
     return { title: 'Product Not Found', robots: { index: false } };
   }
   const url = `${BASE}/products/${product.slug}`;
-  const description = truncateText(product.description, 155);
+  // Per-product SEO overrides when set; otherwise the previous defaults (identical).
+  const title = product.seoTitle || product.name;
+  const description = product.seoDescription || truncateText(product.description, 155);
+  const ogImage = product.ogImage || product.imageUrl;
   return {
-    title: product.name,
+    title,
     description,
-    alternates: { canonical: `/products/${product.slug}` },
+    ...(product.seoKeywords
+      ? { keywords: product.seoKeywords.split(',').map((k) => k.trim()).filter(Boolean) }
+      : {}),
+    ...(product.metaRobots ? { robots: product.metaRobots } : {}),
+    alternates: { canonical: product.canonicalUrl || `/products/${product.slug}` },
     openGraph: {
       type: 'website',
-      title: `${product.name} | GreenTouch Chemicals`,
+      title: `${title} | GreenTouch Chemicals`,
       description,
       url,
-      ...(product.imageUrl ? { images: [{ url: product.imageUrl, alt: product.name }] } : {}),
+      ...(ogImage ? { images: [{ url: ogImage, alt: product.name }] } : {}),
     },
     twitter: {
       card: 'summary_large_image',
-      title: product.name,
+      title,
       description,
-      ...(product.imageUrl ? { images: [product.imageUrl] } : {}),
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
   };
 }
@@ -76,18 +83,21 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(params.slug, 3);
+  const [related, settings] = await Promise.all([
+    getRelatedProducts(params.slug, 3),
+    getSiteSettings(),
+  ]);
   const url = `${BASE}/products/${product.slug}`;
 
   // WhatsApp inquiry deep-link with a prefilled, product-specific message.
-  const whatsappHref = `https://wa.me/977${CONTACT_INFO.phone}?text=${encodeURIComponent(
+  const whatsappHref = `https://wa.me/977${settings.whatsapp}?text=${encodeURIComponent(
     `Hello GreenTouch, I'm interested in ${product.name}. Could you share pricing and availability?`
   )}`;
 
   // Differentiated enquiry paths (bulk / technical / sales) — each opens
   // WhatsApp with a prefilled, context-specific message. No new components.
   const wa = (text: string) =>
-    `https://wa.me/977${CONTACT_INFO.phone}?text=${encodeURIComponent(text)}`;
+    `https://wa.me/977${settings.whatsapp}?text=${encodeURIComponent(text)}`;
   const enquiryOptions = [
     {
       icon: Boxes,
@@ -117,7 +127,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
     description: product.description,
     ...(product.imageUrl ? { image: [product.imageUrl] } : {}),
     brand: { '@type': 'Brand', name: 'GreenTouch Chemicals Pvt. Ltd.' },
-    category: 'Cleaning & Hygiene',
+    category: product.category || 'Cleaning & Hygiene',
     url,
   };
 
@@ -135,11 +145,11 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
     <main className="bg-white dark:bg-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(productJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd) }}
       />
 
       {/* ── Hero: gallery + info ────────────────────────────────────────── */}
@@ -155,7 +165,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
             <div className="flex flex-col">
               <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-green-700 dark:bg-green-900/40 dark:text-green-300">
                 <Package className="h-3.5 w-3.5" />
-                Cleaning &amp; Hygiene
+                {product.category || 'Cleaning & Hygiene'}
               </span>
               <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 md:text-[2.5rem]">
                 {product.name}
@@ -213,7 +223,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                   WhatsApp Inquiry
                 </a>
                 <a
-                  href={`tel:${CONTACT_INFO.phone}`}
+                  href={`tel:${settings.phone}`}
                   className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 font-semibold text-slate-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-green-300 hover:text-green-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:border-green-700/60"
                 >
                   <Phone className="h-4 w-4" />

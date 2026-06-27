@@ -1,13 +1,14 @@
 import { Phone, Mail } from 'lucide-react';
 import PremiumHero from '../ui/PremiumHero';
 import { HERO_TRUST } from '../ui/heroData';
-import { CONTACT_INFO } from '../../lib/constants';
+import { getSiteSettings } from '../../lib/queries/site-settings';
 
 // Contact hero — built on the shared PremiumHero system. Phone + email are
 // surfaced as CTAs and desktop floating panels; on mobile the CTA row is hidden
 // (the global sticky bar + the form directly below cover contact actions, so the
 // form stays within the first mobile screen).
-export default function ContactHero() {
+export default async function ContactHero() {
+  const s = await getSiteSettings();
   return (
     <PremiumHero
       padding="py-10 md:py-24"
@@ -22,13 +23,13 @@ export default function ContactHero() {
       trust={HERO_TRUST}
       trustMobileHidden
       ctas={[
-        { label: CONTACT_INFO.phoneDisplay, href: `tel:${CONTACT_INFO.phone}`, variant: 'primary', icon: Phone },
-        { label: 'Email Us', href: `mailto:${CONTACT_INFO.email}`, variant: 'outline', icon: Mail },
+        { label: s.phoneDisplay, href: `tel:${s.phone}`, variant: 'primary', icon: Phone },
+        { label: 'Email Us', href: `mailto:${s.email}`, variant: 'outline', icon: Mail },
       ]}
       ctasMobileHidden
       floatingStats={[
-        { icon: Phone, value: CONTACT_INFO.phoneDisplay, label: 'Call our team' },
-        { icon: Mail, value: CONTACT_INFO.email, label: 'Email us' },
+        { icon: Phone, value: s.phoneDisplay, label: 'Call our team' },
+        { icon: Mail, value: s.email, label: 'Email us' },
       ]}
     />
   );

@@ -2,15 +2,17 @@ import { ArrowUpRight } from 'lucide-react';
 import Reveal from '../ui/Reveal';
 import { cn } from '../../lib/utils';
 import { cardBase, cardHover, cardIconTile } from '../ui/Card';
-import { CONTACT_OPTIONS } from './contactData';
+import { buildContactOptions } from './contactData';
+import { getSiteSettings } from '../../lib/queries/site-settings';
 
 // Section 2 — three premium, tactile contact-method cards. Hover lift + shadow +
 // border glow + icon scale are pure CSS (no JS cost).
-export default function ContactOptions() {
+export default async function ContactOptions() {
+  const options = buildContactOptions(await getSiteSettings());
   return (
     <section className="container py-16 md:py-20">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {CONTACT_OPTIONS.map(({ icon: Icon, title, value, description, href, external }, i) => {
+        {options.map(({ icon: Icon, title, value, description, href, external }, i) => {
           const card = (
             <article className={cn(cardBase, cardHover, 'group relative flex h-full flex-col p-6 md:p-8')}>
               <div className={cn(cardIconTile, 'mb-5 w-fit p-3.5')}>

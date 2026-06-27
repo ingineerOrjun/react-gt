@@ -9,6 +9,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Serialize a JSON-LD object for an inline <script>. Escapes `<` so a value
+ * containing `</script>` cannot break out of the tag (XSS hardening).
+ */
+export function jsonLdScript(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
+/**
  * Validates email format
  */
 export function isValidEmail(email: string): boolean {

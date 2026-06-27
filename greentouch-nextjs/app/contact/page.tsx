@@ -10,7 +10,15 @@ import LocationSection from '../components/contact/LocationSection';
 import SocialProof from '../components/contact/SocialProof';
 import Reveal from '../components/ui/Reveal';
 import { CONTACT_FAQS } from '../components/contact/contactData';
-import { CONTACT_INFO } from '../lib/constants';
+import { getSiteSettings } from '../lib/queries/site-settings';
+import { jsonLdScript } from '../lib/utils';
+
+const SOCIAL_META = [
+  { key: 'facebook' as const, label: 'Facebook', icon: Facebook },
+  { key: 'twitter' as const, label: 'Twitter', icon: Twitter },
+  { key: 'linkedin' as const, label: 'LinkedIn', icon: Linkedin },
+  { key: 'instagram' as const, label: 'Instagram', icon: Instagram },
+];
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -19,15 +27,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/contact' },
 };
 
-const SOCIALS = [
-  { label: 'Facebook', icon: Facebook, url: 'https://facebook.com/greentouchchemicalsindustries' },
-  { label: 'Twitter', icon: Twitter, url: 'https://twitter.com/greentouchchem' },
-  { label: 'LinkedIn', icon: Linkedin, url: 'https://linkedin.com/company/greentouch-chemical-industries' },
-  { label: 'Instagram', icon: Instagram, url: 'https://instagram.com/greentouchchemicalsindustries' },
-];
-
-// FAQ + contact-point structured data for richer search results. Server-only,
-// zero runtime cost.
+// FAQ structured data for richer search results. Server-only, zero runtime cost.
 const faqJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -38,35 +38,41 @@ const faqJsonLd = {
   })),
 };
 
-const contactPointJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'GreenTouch Chemicals Pvt. Ltd.',
-  url: 'https://greentouchchemicals.com/contact',
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: CONTACT_INFO.phone,
-    email: CONTACT_INFO.email,
-    contactType: 'sales',
-    areaServed: 'NP',
-    availableLanguage: ['en', 'ne'],
-  },
-};
-
 // Server-rendered page shell. The only client islands are <ContactForm /> (owns
 // its validation, Turnstile, and submission) and the small FAQ accordion +
 // <Reveal> entrance wrappers. Rendering the shell on the server preserves
 // SSR/SEO while keeping the JS payload minimal.
-export default function ContactPage() {
+export default async function ContactPage() {
+  const s = await getSiteSettings();
+  const socials = SOCIAL_META.map((m) => ({ ...m, url: s.social[m.key] })).filter(
+    (x): x is typeof x & { url: string } => Boolean(x.url),
+  );
+  const hours = s.businessHours[0] ? `${s.businessHours[0].label}: ${s.businessHours[0].value}` : '';
+
+  const contactPointJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: s.companyName,
+    url: `${s.siteUrl}/contact`,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: s.phone,
+      email: s.email,
+      contactType: 'sales',
+      areaServed: 'NP',
+      availableLanguage: ['en', 'ne'],
+    },
+  };
+
   return (
     <main className="bg-white dark:bg-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPointJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(contactPointJsonLd) }}
       />
 
       {/* Section 1 — Premium hero */}
@@ -99,7 +105,7 @@ export default function ContactPage() {
                   <ul className="mb-6 flex flex-wrap gap-2">
                     <li className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 ring-1 ring-green-100 dark:bg-green-900/30 dark:text-green-300 dark:ring-green-800/40">
                       <Clock className="h-3.5 w-3.5" />
-                      {CONTACT_INFO.hours}
+                      {hours}
                     </li>
                     <li className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 ring-1 ring-green-100 dark:bg-green-900/30 dark:text-green-300 dark:ring-green-800/40">
                       <Phone className="h-3.5 w-3.5" />
@@ -122,7 +128,7 @@ export default function ContactPage() {
                     Connect With Us
                   </h2>
                   <div className="flex flex-wrap gap-3">
-                    {SOCIALS.map(({ label, icon: Icon, url }) => (
+                    {socials.map(({ label, icon: Icon, url }) => (
                       <a
                         key={label}
                         href={url}

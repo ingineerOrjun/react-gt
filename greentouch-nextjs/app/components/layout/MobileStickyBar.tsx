@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import { FileText, Phone } from 'lucide-react';
 import WhatsappIcon from '../products/detail/WhatsappIcon';
-import { CONTACT_INFO } from '../../lib/constants';
-
-const whatsappHref = `https://wa.me/977${CONTACT_INFO.phone}?text=${encodeURIComponent(
-  'Hello GreenTouch, I would like to inquire about your cleaning and hygiene products.'
-)}`;
+import { getSiteSettings } from '../../lib/queries/site-settings';
 
 // Global mobile conversion bar. CSS-only Server Component (no client JS):
 // fixed to the bottom, hidden on lg+ (desktop) and on /admin (gated in SiteMain),
 // with iOS safe-area support. Every action is a ≥44px touch target.
-export default function MobileStickyBar() {
+export default async function MobileStickyBar() {
+  const s = await getSiteSettings();
+  const whatsappHref = `https://wa.me/977${s.whatsapp}?text=${encodeURIComponent(
+    'Hello GreenTouch, I would like to inquire about your cleaning and hygiene products.',
+  )}`;
   return (
     <div
       role="region"
@@ -35,7 +35,7 @@ export default function MobileStickyBar() {
           Get a Quote
         </Link>
         <a
-          href={`tel:${CONTACT_INFO.phone}`}
+          href={`tel:${s.phone}`}
           aria-label="Call us"
           className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-300 text-slate-700 transition-colors hover:border-green-300 hover:text-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:border-slate-700 dark:text-slate-200 dark:focus-visible:ring-offset-slate-900"
         >

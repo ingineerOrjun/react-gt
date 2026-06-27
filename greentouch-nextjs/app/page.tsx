@@ -9,6 +9,7 @@ import HowItWorks from './components/home/HowItWorks';
 import HomeFaqCondensed from './components/home/HomeFaqCondensed';
 import HomeFinalCta from './components/home/HomeFinalCta';
 import { CONTACT_FAQS } from './components/contact/contactData';
+import { jsonLdScript } from './lib/utils';
 
 const BASE = 'https://greentouchchemicals.com';
 const description =
@@ -70,16 +71,16 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }}
       />
       {itemListJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(itemListJsonLd) }}
         />
       )}
 

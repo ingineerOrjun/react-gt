@@ -6,6 +6,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/layout/Footer';
 import MobileStickyBar from './components/layout/MobileStickyBar';
 import SiteMain from './components/SiteMain';
+import { getSiteSettings } from './lib/queries/site-settings';
+import { jsonLdScript } from './lib/utils';
 import './globals.css';
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
@@ -32,68 +34,56 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
-const siteUrl = 'https://greentouchchemicals.com';
+// Metadata is now database-driven (single source of truth). Defaults are seeded
+// to the previous hardcoded values, so output is identical until edited in admin.
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getSiteSettings();
+  return {
+    metadataBase: new URL(s.siteUrl),
+    title: { default: s.seoTitle, template: `%s | ${s.companyName}` },
+    description: s.seoDescription,
+    keywords: s.seoKeywords.split(',').map((k) => k.trim()).filter(Boolean),
+    authors: [{ name: s.companyName }],
+    openGraph: {
+      type: 'website',
+      siteName: s.companyName,
+      title: s.seoTitle,
+      description: s.seoDescription,
+      url: s.siteUrl,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: s.companyName,
+      description: s.seoDescription,
+    },
+  };
+}
 
-const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'GreenTouch Chemicals Pvt. Ltd.',
-  url: siteUrl,
-  logo: `${siteUrl}/icon.svg`,
-  description: 'Eco-friendly chemical products and sustainable solutions.',
-  email: 'greentouch.np@gmail.com',
-  telephone: '+977-9801603296',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Dhalkebar, Mithila Municipality',
-    addressRegion: 'Dhanusha',
-    postalCode: '45700',
-    addressCountry: 'NP',
-  },
-  sameAs: [
-    'https://facebook.com/greentouchchemicalsindustries',
-    'https://twitter.com/greentouchchem',
-    'https://instagram.com/greentouchchemicalsindustries',
-    'https://linkedin.com/company/greentouch-chemical-industries',
-  ],
-};
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: 'GreenTouch Chemicals Pvt. Ltd. | Sustainable Chemical Solutions',
-    template: '%s | GreenTouch Chemicals Pvt. Ltd.',
-  },
-  description:
-    'GreenTouch Chemicals Pvt. Ltd. is a leading provider of eco-friendly chemical products and sustainable solutions for industrial and consumer applications.',
-  keywords: [
-    'sustainable chemicals',
-    'eco-friendly products',
-    'green chemical solutions',
-    'biodegradable',
-    'GreenTouch Chemicals',
-  ],
-  authors: [{ name: 'GreenTouch Chemicals Pvt. Ltd.' }],
-  openGraph: {
-    type: 'website',
-    siteName: 'GreenTouch Chemicals Pvt. Ltd.',
-    title: 'GreenTouch Chemicals Pvt. Ltd. | Sustainable Chemical Solutions',
-    description:
-      'Eco-friendly chemical products and sustainable solutions for industrial and consumer applications.',
-    url: siteUrl,
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'GreenTouch Chemicals Pvt. Ltd.',
-    description: 'Sustainable chemical solutions for a greener tomorrow.',
-  },
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const s = await getSiteSettings();
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: s.companyName,
+    url: s.siteUrl,
+    logo: `${s.siteUrl}/icon.svg`,
+    description: s.companyDescription || s.seoDescription,
+    email: s.email,
+    telephone: `+977-${s.phone}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: [s.addressStreet, s.addressMunicipality].filter(Boolean).join(', '),
+      addressRegion: s.addressDistrict,
+      postalCode: s.addressPostalCode,
+      addressCountry: 'NP',
+    },
+    sameAs: [s.social.facebook, s.social.twitter, s.social.instagram, s.social.linkedin].filter(Boolean),
+  };
+
   return (
     <html
       lang="en"
@@ -103,7 +93,7 @@ export default function RootLayout({
       <body className="font-sans antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 selection:bg-green-200 selection:text-green-900">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd) }}
         />
         <Providers>
           <a

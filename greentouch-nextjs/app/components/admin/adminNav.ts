@@ -43,8 +43,8 @@ export const ADMIN_NAV: AdminNavSection[] = [
     title: 'Content',
     items: [
       { label: 'Products', href: '/admin/products', icon: Package },
-      { label: 'Categories', icon: Tags, soon: true },
-      { label: 'Industries', icon: Factory, soon: true },
+      { label: 'Categories', href: '/admin/categories', icon: Tags },
+      { label: 'Industries', href: '/admin/industries', icon: Factory },
       { label: 'Blog', href: '/admin/blogs', icon: FileText },
       { label: 'Media Library', icon: ImageIcon, soon: true },
       { label: 'Testimonials', icon: Quote, soon: true },
@@ -54,7 +54,7 @@ export const ADMIN_NAV: AdminNavSection[] = [
   {
     title: 'Site',
     items: [
-      { label: 'Homepage', icon: Home, soon: true },
+      { label: 'Homepage', href: '/admin/homepage', icon: Home },
       { label: 'About', icon: Info, soon: true },
       { label: 'Contact Info', icon: Contact, soon: true },
       { label: 'Service Areas', icon: Map, soon: true },
@@ -71,7 +71,7 @@ export const ADMIN_NAV: AdminNavSection[] = [
   {
     title: 'System',
     items: [
-      { label: 'Settings', icon: Settings, soon: true },
+      { label: 'Settings', href: '/admin/settings', icon: Settings },
       { label: 'Users', icon: Users, soon: true },
     ],
   },

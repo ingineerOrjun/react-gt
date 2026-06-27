@@ -6,14 +6,14 @@ const LEGAL = [
   { label: 'Sitemap', href: '/sitemap.xml' },
 ];
 
-// Footer bottom bar — copyright + legal links. `year` is passed in so the
-// component stays trivially pure.
-export default function FooterBottom({ year }: { year: number }) {
+// Footer bottom bar — copyright + legal links. `year` and `copyright` are passed
+// in (copyright is database-driven) so the component stays trivially pure.
+export default function FooterBottom({ year, copyright }: { year: number; copyright: string }) {
   return (
     <div className="border-t border-white/10 pt-6 pb-24 lg:pb-6">
       <div className="container flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
         <p className="text-sm text-slate-400">
-          © {year} GreenTouch Chemicals Pvt. Ltd. All rights reserved.
+          © {year} {copyright}
         </p>
         <nav aria-label="Legal">
           <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

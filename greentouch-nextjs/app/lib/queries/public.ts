@@ -19,6 +19,15 @@ export interface ProductView {
   name: string;
   description: string;
   imageUrl: string | null;
+  // Product CMS (optional — present only when set; public falls back otherwise)
+  shortDescription?: string | null;
+  category?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string | null;
+  ogImage?: string | null;
+  canonicalUrl?: string | null;
+  metaRobots?: string | null;
 }
 
 export interface BlogCardView {
@@ -85,18 +94,38 @@ export async function getProductBySlug(slug: string): Promise<ProductView | null
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from('products')
-      .select('id, slug, name, description, image_path')
+      .select(
+        'id, slug, name, description, image_path, short_description, seo_title, seo_description, seo_keywords, og_image, canonical_url, meta_robots, category:product_categories(name)',
+      )
       .eq('slug', slug)
       .eq('published', true)
       .maybeSingle();
     if (error || !data) return null;
-    const p = data as unknown as ProductSelect;
+    const p = data as unknown as ProductSelect & {
+      short_description: string | null;
+      seo_title: string | null;
+      seo_description: string | null;
+      seo_keywords: string | null;
+      og_image: string | null;
+      canonical_url: string | null;
+      meta_robots: string | null;
+      category: { name: string } | { name: string }[] | null;
+    };
+    const category = Array.isArray(p.category) ? p.category[0]?.name ?? null : p.category?.name ?? null;
     return {
       id: p.id,
       slug: p.slug,
       name: p.name,
       description: p.description,
       imageUrl: publicImageUrl('products', p.image_path),
+      shortDescription: p.short_description ?? null,
+      category,
+      seoTitle: p.seo_title ?? null,
+      seoDescription: p.seo_description ?? null,
+      seoKeywords: p.seo_keywords ?? null,
+      ogImage: p.og_image ?? null,
+      canonicalUrl: p.canonical_url ?? null,
+      metaRobots: p.meta_robots ?? null,
     };
   } catch {
     return null;
